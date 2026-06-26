@@ -1,0 +1,3 @@
+[submodule "amp_bringup"]
+	path = amp_bringup
+	url = https://github.com/amperaufsc/amp_bringup
