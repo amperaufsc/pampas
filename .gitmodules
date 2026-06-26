@@ -1,3 +1,15 @@
 [submodule "amp_bringup"]
 	path = amp_bringup
 	url = https://github.com/amperaufsc/amp_bringup
+[submodule "amp_mapping"]
+	path = amp_mapping
+	url = git@github.com:amperaufsc/amp_mapping.git
+[submodule "amp_motion"]
+	path = amp_motion
+	url = git@github.com:amperaufsc/amp_motion.git
+[submodule "amp_perception"]
+	path = amp_perception
+	url = git@github.com:amperaufsc/amp_perception.git
+[submodule "amp_utils"]
+	path = amp_utils
+	url = git@github.com:amperaufsc/amp_utils.git
