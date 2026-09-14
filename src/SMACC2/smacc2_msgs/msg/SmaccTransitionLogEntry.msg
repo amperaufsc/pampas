@@ -1,2 +1,0 @@
-builtin_interfaces/Time timestamp
-smacc2_msgs/SmaccTransition transition

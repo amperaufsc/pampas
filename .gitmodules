@@ -20,3 +20,6 @@
 [submodule "src/velodyne-drivers"]
 	path = src/velodyne-drivers
 	url = https://github.com/amperaufsc/velodyne-drivers.git
+[submodule ".src/velodyne-drivers"]
+	path = .src/velodyne-drivers
+	url = https://github.com/amperaufsc/velodyne-drivers.git
