@@ -1,15 +1,22 @@
-[submodule "amp_bringup"]
-	path = amp_bringup
-	url = https://github.com/amperaufsc/amp_bringup
-[submodule "amp_mapping"]
-	path = amp_mapping
-	url = git@github.com:amperaufsc/amp_mapping.git
-[submodule "amp_motion"]
-	path = amp_motion
-	url = git@github.com:amperaufsc/amp_motion.git
-[submodule "amp_perception"]
-	path = amp_perception
-	url = git@github.com:amperaufsc/amp_perception.git
-[submodule "amp_utils"]
-	path = amp_utils
-	url = git@github.com:amperaufsc/amp_utils.git
+[submodule "src/depthai-ros"]
+	path = src/depthai-ros
+	url = git@github.com:amperaufsc/depthai-ros.git
+[submodule "src/fs_msgs"]
+	path = src/fs_msgs
+	url = git@github.com:amperaufsc/fs_msgs.git
+[submodule "src/ORB-SLAM3-STEREO-FIXED"]
+	path = src/ORB-SLAM3-STEREO-FIXED
+	url = git@github.com:amperaufsc/ORB-SLAM3-STEREO-FIXED.git
+[submodule "src/ORB_SLAM3_ROS2"]
+	path = src/ORB_SLAM3_ROS2
+	url = git@github.com:amperaufsc/ORB_SLAM3_ROS2.git
+[submodule "src/Pangolin"]
+	path = src/Pangolin
+	url = git@github.com:stevenlovegrove/Pangolin.git
+	branch = e20e6c1130294030db750988f95ed324f50587b9
+[submodule "src/SMACC2"]
+	path = src/SMACC2
+	url = https://github.com/robosoft-ai/SMACC2.git
+[submodule "src/velodyne-drivers"]
+	path = src/velodyne-drivers
+	url = https://github.com/amperaufsc/velodyne-drivers.git
