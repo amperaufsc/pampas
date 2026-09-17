@@ -1,4 +1,5 @@
 name: Autodeploy docs
+
 on:
   push:
     branches: [main]
@@ -11,5 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: astral-sh/setup-uv@v3
-      - run: uv run --with mkdocs-material -- mkdocs gh-deploy --force
+        with:
+          enable-cache: true
+
+      - name: Build and deploy docs
+        run: uv run --no-project --with mkdocs-material -- mkdocs gh-deploy --force
