@@ -7,4 +7,11 @@ nav:
       - Overview: software-overview.md
   - Hardware modules:
       - Overview: hardware-overview.md
-theme: readthedocs
+theme:
+  name: material
+  features:
+    - navigation.sections   # top-level sections render as plain headers, not clickable/collapsible
+    - navigation.expand     # all sections start expanded
+extra:
+  version:
+    provider: mike

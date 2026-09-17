@@ -1,0 +1,17 @@
+name: Deploy versioned docs
+on:
+  push:
+    tags: ['v*']
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # mike needs full history/gh-pages branch
+      - uses: astral-sh/setup-uv@v3
+      - run: |
+          VERSION=${GITHUB_REF_NAME#v}
+          uv run --with mkdocs-material --with mike -- mike deploy --push --update-aliases $VERSION latest
+          uv run --with mike -- mike set-default --push latest
