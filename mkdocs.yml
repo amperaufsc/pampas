@@ -1,0 +1,10 @@
+site_name: PAMPAS
+nav:
+  - Home: index.md
+  - Get started:
+    - First steps: first-steps.md
+  - Software modules:
+      - Overview: software-overview.md
+  - Hardware modules:
+      - Overview: hardware-overview.md
+theme: readthedocs
