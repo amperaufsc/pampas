@@ -6,3 +6,5 @@ run/
 # Workspace
 .vscode/
 
+# MkDocs build
+site/
