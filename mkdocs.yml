@@ -5,6 +5,7 @@ nav:
     - First steps: first-steps.md
   - Software modules:
       - Overview: software-overview.md
+      - Integration: hardware/integration.md
   - Hardware modules:
       - Overview: hardware-overview.md
 theme:
