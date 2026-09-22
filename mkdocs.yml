@@ -7,6 +7,7 @@ nav:
       - Overview: software-overview.md
   - Hardware modules:
       - Overview: hardware-overview.md
+      - Steering actuator: hardware/steering-actuator.md
 theme:
   name: material
   features:
