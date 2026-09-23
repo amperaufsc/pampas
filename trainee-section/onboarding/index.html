@@ -1,0 +1,995 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../../hardware/steering-actuator/">
+      
+      
+        <link rel="next" href="../challenge/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Onboarding - PAMPAS</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#onboarding" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="PAMPAS" class="md-header__button md-logo" aria-label="PAMPAS" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            PAMPAS
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Onboarding
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="PAMPAS" class="md-nav__button md-logo" aria-label="PAMPAS" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    PAMPAS
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Software modules
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Software modules
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../software-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+          
+        
+        <input class="md-nav__toggle md-toggle md-toggle--indeterminate" type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hardware modules
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Hardware modules
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hardware-overview/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../hardware/steering-actuator/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Steering actuator
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Trainee section
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Trainee section
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Onboarding
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Onboarding
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#week-1-linux-dev-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Week 1 — Linux &amp; Dev Environment
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Week 1 — Linux &amp; Dev Environment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setup-linux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setup Linux
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trainee-in-the-shell" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trainee in the Shell
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#choosing-an-editor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choosing an editor
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#week-2-git-github" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Week 2 — Git &amp; GitHub
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../challenge/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Challenge
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#week-1-linux-dev-environment" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Week 1 — Linux &amp; Dev Environment
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Week 1 — Linux &amp; Dev Environment">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#setup-linux" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Setup Linux
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#trainee-in-the-shell" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Trainee in the Shell
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#choosing-an-editor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Choosing an editor
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#week-2-git-github" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Week 2 — Git &amp; GitHub
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="onboarding">Onboarding</h1>
+<blockquote>
+<p>Disclaimer: this is a work in progress, so there might be missing content. If you have questions, ask your Head for help.</p>
+</blockquote>
+<p>This page is dedicated for new members of the Ampera Electrical FSAE team that are part of the Driverless subteam.</p>
+<p>Here you're going to find the material you should study during your training process. You don't need to master the contents linked here, but it's important you get a good grasp of the basics, and as such the resources here are at the introductory level.</p>
+<p>The sections are ordered in the recommended order of study and divided in weeks, and the whole course spans 9 to 10 weeks.</p>
+<p>You're going to be formally introduced to this material by your Head, very likely during a shift.</p>
+<hr />
+<h2 id="week-1-linux-dev-environment">Week 1 — Linux &amp; Dev Environment</h2>
+<p>In the first week of your training, you're going to learn how to setup a Linux environment and how to interact with a terminal. This is fundamental knowledge for Driverless because our systems run on Linux, and often we have to work with only the terminal without the help of guided user interfaces (GUIs), the graphical windows that you're used to see in your computer.</p>
+<p>The goal of this week is for you to have a functional Linux environment and become comfortable with the terminal.</p>
+<h3 id="setup-linux">Setup Linux</h3>
+<p>There are many ways we can setup a Linux environment: installing to disk, using a virtual machine, spinning up a container or even accessing remotely a machine that runs Linux. This list is not exhaustive.</p>
+<p>If you're a long time Windows user and not ready to do a full migration over to Linux, you can start with something called Windows Subsystem for Linux (WSL). It's basically a virtual machine that runs Linux and exposes a terminal window for you to interact with it.</p>
+<p>Just follow the installation instructions provided by the official docs:</p>
+<ul>
+<li>WSL2 install guide (Windows users): <a href="https://learn.microsoft.com/en-us/windows/wsl/install">Microsoft docs</a></li>
+</ul>
+<p>Now, if you want a native Linux experience, we recommend you actually install a Linux operating system in your hard drive. There's a catch though. Windows is an operating system that is provided uniquely by Microsoft and that has only a single "flavour" per version. That is, you don't have a choice of a different Windows 11 other than what Microsoft provides (legally).</p>
+<p>Linux is different. Linux has many distributions: versions that are configured differently, have different looks and tools, are installed in different ways and are provided by different people/organizations.</p>
+<p>It's not in the scope of this guide to describe each Linux <em>distro</em> (short for distribution), we'll point you to this tutorial for that:</p>
+<ul>
+<li>Linux Journey Tutorial: <a href="https://labex.io/linuxjourney/courses/getting-started">Getting started</a></li>
+</ul>
+<p>It doesn't really matter which distro you chose, but if you're an absolute beginner we recommend either the latest Long Term Support (LTS) version of Ubuntu or Linux Mint. It's usual for people in Driverless to work with Ubuntu, both because it's the most popular disto in the world (I think), and because it comes pretty much pre-configured for you.</p>
+<p>If you have enough space in your hard drive, or have a second one that is installed but not really being used, you can install Ubuntu alongside Windows. There is an infinite number of tutorials on the internet on how to install Ubuntu, but we prefer to point you to the official docs:</p>
+<ul>
+<li>Ubuntu install guide: <a href="https://ubuntu.com/tutorials/install-ubuntu-desktop">Canonical docs</a></li>
+</ul>
+<p>Make sure that you have a working Linux environment before you proceed to the next section.</p>
+<h3 id="trainee-in-the-shell">Trainee in the Shell</h3>
+<p>Ok, now it's time to open the terminal and look like a hacker.</p>
+<p>On Ubuntu, we can use the application launcher search function by pressing the SUPER button on the keyboard (aka the Windows button) and typing "terminal". Alternatively, you can aura farm by using a shortcut: <code>ctrl + alt + t</code>.</p>
+<p>That's as far as I'm going. I'll leave the rest to a much more professional guide on the terminal and shell:</p>
+<ul>
+<li>
+<p>MIT Missing Semester — <a href="https://missing.csail.mit.edu/2026/course-shell/">Course Overview + Introduction to Shell</a></p>
+</li>
+<li>
+<p>MIT Missing Semester — <a href="https://missing.csail.mit.edu/2026/command-line-environment/">Command-line Environment</a></p>
+</li>
+</ul>
+<p>These links are from <a href="https://missing.csail.mit.edu/">The Missing Semester of Your CS Education (2026)</a>, an excellent guide by the MIT on computer science stuff you should learn, but that is not usually taught in university. Now we know not all trainees of Driverless are in the computer science course, you may be in any kind of engineering, maybe even mathematics or physics. Regardless, the material presented there is very useful for any STEM student, not limited to whether you're going to work with code or not.</p>
+<p>There is a video and a written material. I recommend watching the video then reading the text. If you're confident you already know what you're watching, still watch the video but skip the parts you're familiar with. There are some less common things being shown and taught that even a long time Linux user might not know or remember.</p>
+<p>Mind you there is a list of exercises after the text, at the bottom of each of those pages. They are not mandatory, but we recommend you read through them and try to solve some. </p>
+<p>Try to do it with only the information you got from the class. If you're having a hard time, use <code>man</code> or <code>tldr</code> to see the documentation of the command you're using. If it's still too hard, search up some examples. As a final resource, ask an AI for tips. Avoid going straight for the answer without having tried at least 10 different ways. It might not be enough, but is through that process, repetition, that you start learning what you're doing.</p>
+<p>Ah, and of course, if there's a colleague nearby, ask away! Don't be shy :)</p>
+<h3 id="choosing-an-editor">Choosing an editor</h3>
+<p>In Driverless, there's a very high chance you'll need to interact with code -- or at least some kind of config file in your Linux machine -- and you'll want to use some kind of text editor for that; and I'm not talking about formatted text editors like Word and Google Docs.</p>
+<p>It's common for programmers to use IDEs (Integrated Development Environments), that are basically text editors with a bunch of nice extras that help you write code. The most well known of them is <a href="https://code.visualstudio.com/">VsCode</a>.</p>
+<p>There is a class about that in the MIT course:</p>
+<ul>
+<li>MIT Missing Semester — <a href="https://missing.csail.mit.edu/2026/development-environment/">Development Environment and Tools</a></li>
+</ul>
+<p>The first half of that class is basically about Vim. You can use it if you want, though know that you might have to spend a significant amount of time getting used to it and configuring it to attend your needs. If you have that time and will, go for it.</p>
+<p>The second half happens on VsCode and talks about language servers, type checking, how to navigate to quickly navigate between references in your code etc. This part is more important, so if you want to skip the part about Vim, that's ok.</p>
+<p>Besides VsCode, other very feature complete IDEs are <a href="https://zed.dev/">Zed</a>, the <a href="https://www.jetbrains.com/ides/#choose-your-ide">Jetbrains IDEs</a>, and a bunch of others. Feel free to test them and chose whichever you prefer. Most folks in Driverless end up chosing VsCode for its ease of use.</p>
+<hr />
+<h2 id="week-2-git-github">Week 2 — Git &amp; GitHub</h2>
+<p>Coming soon.</p>
+<!--**Resources:**
+
+- [Pro Git Book — Chapters 1-3](https://git-scm.com/book/en/v2)
+- [Atlassian Git Tutorials — Branching & Merging](https://www.atlassian.com/git/tutorials/using-branches)
+- [Oh My Git! (interactive game)](https://ohmygit.org/)
+
+**Focus on:** commits, branching, merge vs. rebase, resolving conflicts hands-on. Skip: submodules, advanced history rewriting.
+
+**Team workflow:**
+
+- [ ] TODO: link to our branching strategy / PR conventions
+- [ ] TODO: link to our GitHub repo structure and issue board
+
+**Checkpoint exercise:** TODO — give them a repo pre-built to produce a merge conflict, have them resolve it and open a PR.-->
+
+<hr />
+<!--## Week 3 — Language Refresher (C++/Python for Robotics)
+
+Coming soon.
+
+**Resources:**
+
+- TODO: link based on team's primary language
+- If C++: [LearnCpp — pointers/memory sections](https://www.learncpp.com/), CMake basics guide
+- If Python: virtual environments (`venv`/`conda`), packaging basics
+
+**Focus on:** what's different from intro CS courses — build systems, memory management (C++) or environment management (Python). Skip basic syntax they already know.
+
+**Checkpoint exercise:** TODO
+
+---
+
+## Week 4 — Driverless Overview & System Architecture
+
+_No external resources here — this is entirely team-specific._
+
+- Full pipeline walkthrough: perception → SLAM → path planning → control → actuation
+- Our sensor suite (cameras, LiDAR, IMU, encoders, GPS)
+- Competition rules relevant to driverless (FSG/FS-AI — link rulebook)
+- Past competition footage/logs
+
+**TODO:** slides or recorded walkthrough link, sensor datasheet links, rulebook link.
+
+---
+
+## Week 5 — Intro to ROS2
+
+**Resources:**
+
+- [ROS2 Official Tutorials — Beginner: CLI Tools](https://docs.ros.org/en/humble/Tutorials/Beginner-CLI-Tools.html)
+- [ROS2 Official Tutorials — Beginner: Client Libraries](https://docs.ros.org/en/humble/Tutorials/Beginner-Client-Libraries.html) (publisher/subscriber, services)
+
+**Focus on:** nodes, topics, services, launch files, parameters. Skip: actions and lifecycle nodes for now (cover later if relevant).
+
+**Team setup:**
+
+- [ ] TODO: link to our ROS2 workspace setup / repo
+
+**Checkpoint exercise:** TODO — write a simple pub/sub node pair.
+
+---
+
+## Week 6 — ROS2 Deep Dive + Simulation
+
+**Resources:**
+
+- [ROS2 TF2 tutorials](https://docs.ros.org/en/humble/Tutorials/Intermediate/Tf2/Tf2-Main.html)
+- [Gazebo / our sim environment docs] — TODO link
+- [RViz2 user guide](https://docs.ros.org/en/humble/Tutorials/Intermediate/RViz/RViz-User-Guide/RViz-User-Guide.html)
+
+**Focus on:** TF2 (transforms) — budget extra time here, it trips everyone up. `ros2 bag` for logging/replay.
+
+**Checkpoint exercise:** TODO — visualize a TF tree or replay a bag file in RViz.
+
+---
+
+## Week 7 — Perception Basics
+
+**Resources:**
+
+- TODO: camera/LiDAR calibration intro links
+- TODO: cone detection approach overview (link to our method: classical CV vs. learned)
+
+**Focus on:** what our stack actually uses — don't survey the whole field.
+
+**Checkpoint exercise:** TODO
+
+---
+
+## Week 8 — Planning & Control Basics
+
+**Resources:**
+
+- TODO: path planning intro (matched to our approach — occupancy grid / spline-based / etc.)
+- TODO: PID intuition resource
+
+**Focus on:** how planning/control consume perception output — the interfaces matter more than the theory depth at this stage.
+
+**Checkpoint exercise:** TODO
+
+---
+
+## Week 9 — Integration Project
+
+Small end-to-end challenge combining prior weeks, e.g.: subscribe to simulated cone detections, publish a simple path.
+
+- [ ] TODO: define the capstone task
+- [ ] TODO: pair each freshman with a subteam mentor for next steps after onboarding
+
+**Final shift:** short presentations/demos.
+
+---
+
+## Maintainer Notes
+
+_(Remove this section before publishing, or keep as an internal wiki note)_
+
+- Replace all TODOs with team-specific links before first use.
+- Resources should be re-checked yearly (docs versions, dead links).
+- Consider tracking completion of checkpoint exercises per person via the wiki or a shared board.-->
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.sections", "navigation.expand"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
