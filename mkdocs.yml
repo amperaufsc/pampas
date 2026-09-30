@@ -1,13 +1,16 @@
 site_name: PAMPAS
 nav:
   - Home: index.md
-  - Get started:
-    - First steps: first-steps.md
   - Software modules:
       - Overview: software-overview.md
       - Integration: hardware/integration.md
   - Hardware modules:
       - Overview: hardware-overview.md
+      - Emergency Brake System: hardware/emergency-brake-system.md
+      - Steering actuator: hardware/steering-actuator.md
+  - Trainee section:
+    - Onboarding: trainee-section/onboarding.md
+    - Challenge: trainee-section/challenge.md
 theme:
   name: material
   features:
@@ -16,3 +19,10 @@ theme:
 extra:
   version:
     provider: mike
+
+markdown_extensions:
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
