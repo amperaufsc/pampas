@@ -3,7 +3,7 @@ nav:
   - Home: index.md
   - Software modules:
       - Overview: software-overview.md
-      - Integration: hardware/integration.md
+      - Integration: software/integration.md
   - Hardware modules:
       - Overview: hardware-overview.md
       - Integration: hardware/integration.md
