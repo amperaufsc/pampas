@@ -6,6 +6,7 @@ nav:
       - Integration: hardware/integration.md
   - Hardware modules:
       - Overview: hardware-overview.md
+      - Integration: hardware/integration.md
       - Emergency Brake System: hardware/emergency-brake-system.md
       - Steering actuator: hardware/steering-actuator.md
   - Trainee section:
