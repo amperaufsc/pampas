@@ -6,7 +6,7 @@ The **Emergency Braking System (EBS)** is responsible for applying the brake ped
 
 The system consists of a compressed-air storage tank rated at approximately 8 bar, a pressure regulator with a pressure gauge, two manual valves (one threaded valve and one push-button valve), a pressure sensor, a normally-open pneumatic solenoid valve, two pneumatic cylinders, mounting hardware, a steel container, and 1/4" pneumatic hoses.
 
-<img width="840" height="628" alt="Image" src="https://github.com/user-attachments/assets/aea5d339-0c71-4a8b-8bf8-abb3af8e2bb0" />
+![](emergency-brake-system/ebs.png)
 
 The system is designed to provide sufficient pressure to the cylinders to pull the car's brake pedal when power to the pneumatic solenoid valve is interrupted.
 
