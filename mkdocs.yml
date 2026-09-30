@@ -3,8 +3,10 @@ nav:
   - Home: index.md
   - Software modules:
       - Overview: software-overview.md
+      - Integration: software/integration.md
   - Hardware modules:
       - Overview: hardware-overview.md
+      - Integration: hardware/integration.md
       - Emergency Brake System: hardware/emergency-brake-system.md
       - Steering actuator: hardware/steering-actuator.md
   - Trainee section:
