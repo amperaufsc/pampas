@@ -5,6 +5,7 @@ nav:
       - Overview: software-overview.md
   - Hardware modules:
       - Overview: hardware-overview.md
+      - Emergency Brake System: hardware/emergency-brake-system.md
       - Steering actuator: hardware/steering-actuator.md
   - Trainee section:
     - Onboarding: trainee-section/onboarding.md
