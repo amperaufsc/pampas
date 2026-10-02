@@ -5,10 +5,10 @@
 	path = src/fs_msgs
 	url = git@github.com:amperaufsc/fs_msgs.git
 [submodule "src/ORB-SLAM3-STEREO-FIXED"]
-	path = src/ORB-SLAM3-STEREO-FIXED
+	path = src/ORB_SLAM3
 	url = git@github.com:amperaufsc/ORB-SLAM3-STEREO-FIXED.git
 [submodule "src/ORB_SLAM3_ROS2"]
-	path = src/ORB_SLAM3_ROS2
+	path = src/orbslam3_ros2
 	url = git@github.com:amperaufsc/ORB_SLAM3_ROS2.git
 [submodule "src/Pangolin"]
 	path = src/Pangolin
