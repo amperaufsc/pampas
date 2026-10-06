@@ -1,10 +1,11 @@
-### RES (Vehicle Module):
+# RES (Vehicle Module):
 
 The **RES (Remote Emergency System)** lets an outside operator stop the vehicle remotely, independent of the driver or the onboard software. It consists of two boards: a receiver with an STM32WL5M radio MCU, which gets the stop command over RF, and a vehicle module built around an STM32F103C8T6, mated to the receiver through a shield connector. On command, the vehicle module opens the Shutdown Circuit loop to cut power to the inverter and contactors, and switches the EBS supply to engage the autonomous braking system. It interfaces with the rest of the system through the Placão, for power, CAN and the Shutdown Circuit, and through a dedicated output to the EBS.
 
 <img width="960" height="655" alt="Image" src="https://github.com/user-attachments/assets/f3193705-9994-4583-b31a-66fe19ac004a" />
 
-**Inputs:**
+
+## Inputs:
 
 - **Power:**
   - `12V` (`Alimentação.4`): main 12 V supply, equivalent to `VCC_RES` from the Placão's eFuse. Feeds the buck converter (`IC1`) and, downstream, the whole board.
@@ -16,7 +17,7 @@ The **RES (Remote Emergency System)** lets an outside operator stop the vehicle 
 - **Serial link (from the STM32WL5M shield):** `USART1_RX` (shield pin 18).
 - **Debug/Programming:** `SWDIO`, `SWCLK` (header `SW`) and `BOOT_0`, `BOOT_1` (dedicated headers), used to flash and debug `U1`.
 
-**Outputs:**
+## Outputs:
 
 - **Shutdown Circuit:** `SC_OUT_RES` (`CAN e SC.1`): SDC signal after passing through relay `K2`, forwarded back to the Placão (and from there to the DSB).
 - **CAN bus:** `CAN_HIGH` / `CAN_LOW` (`CAN e SC.4` / `CAN e SC.3`): messages transmitted by `U1` on the vehicle CAN bus (bidirectional with the input above).
