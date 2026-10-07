@@ -12,7 +12,7 @@ You're going to be formally introduced to this material by your Head, very likel
 
 ---
 
-## Week 1 — Linux & Dev Environment
+## Week 1
 
 In the first week of your training, you're going to learn how to setup a Linux environment and how to interact with a terminal. This is fundamental knowledge for Driverless because our systems run on Linux, and often we have to work with only the terminal without the help of guided user interfaces (GUIs), the graphical windows that you're used to see in your computer.
 
@@ -76,7 +76,7 @@ There is a class about that in the MIT course:
 
 - MIT Missing Semester — [Development Environment and Tools](https://missing.csail.mit.edu/2026/development-environment/)
 
-The first half of that class is basically about Vim. You can use it if you want, though know that you might have to spend a significant amount of time getting used to it and configuring it to attend your needs. If you have that time and will, go for it.
+The first half of that class is basically about Vim. You can use it if you want, though know that you might have to spend a significant amount of time getting used to it and con#figuring it to attend your needs. If you have that time and will, go for it.
 
 The second half happens on VsCode and talks about language servers, type checking, how to navigate to quickly navigate between references in your code etc. This part is more important, so if you want to skip the part about Vim, that's ok.
 
@@ -84,31 +84,123 @@ Besides VsCode, other very feature complete IDEs are [Zed](https://zed.dev/), th
 
 ---
 
-## Week 2 — Git & GitHub
+## Week 2
 
-Coming soon.
+### Gitting Good
 
-<!--**Resources:**
+If you're going to work on any halfway serious project (especially a software one), even one built solely by you, you'll use Git. My guess is that in software development, Git is the most used tool of all.
 
-- [Pro Git Book — Chapters 1-3](https://git-scm.com/book/en/v2)
-- [Atlassian Git Tutorials — Branching & Merging](https://www.atlassian.com/git/tutorials/using-branches)
+Git is a version control tool that gives a team a bunch of benefits while developing a project, such as:
+
+- Knowing what changes were made to the project, when, by whom, and why.
+- Going back to a known previous version if the project moved forward in an undesirable way.
+- Letting several people collaborate on the same project artifact, asynchronously, with no need for an internet connection while making changes.
+- Working on more than one version of the project at the same time, easily switching between them or merging the changes from each into a single version.
+- Syncing the changes made by each member of the project without having to keep sending zips by email.
+
+And plenty of others that will become obvious along the guide and your learning process with the tool.
+
+#### Resources
+
+Most important information of all: Read the Git manual! The manual includes everything mentioned in this guide plus basically everything else you might want to know about Git.
+
+The manual is available on its official page. Alternatively, on Linux and MacOS, you can open it in your terminal with `git --help` or `man git`, if you have the `man` package installed (I recommend it).
+
+The manual is the source of truth, but there are plenty of other resources that are more friendly and you should use to learn the tool. For now, let's continue on in the Missing Semester course, with the [class on version control and git](https://missing.csail.mit.edu/2026/version-control/).
+
+There is also an [in-house guide](https://github.com/amperaufsc/git-guide/) -- created for a live git workshop -- that you can have a read on. A part of this guide here was insipired on it.
+
+Besides those, here are some other resources you can use to practice version control with git:
+
+- [Pro Git Book](https://git-scm.com/book/en/v2)
+- [Atlassian Git Tutorials](https://www.atlassian.com/git/tutorials/)
+- [Learn Git Branching](https://learngitbranching.js.org/)
 - [Oh My Git! (interactive game)](https://ohmygit.org/)
 
-**Focus on:** commits, branching, merge vs. rebase, resolving conflicts hands-on. Skip: submodules, advanced history rewriting.
+### Managing projects on GitHub
 
-**Team workflow:**
+GitHub is basically a cloud storage for git projects. It makes collaboration by multiple people on the same project a much easier task by offering a bunch of tools we can use to organize the work.
 
-- [ ] TODO: link to our branching strategy / PR conventions
-- [ ] TODO: link to our GitHub repo structure and issue board
+#### Issues
 
-**Checkpoint exercise:** TODO — give them a repo pre-built to produce a merge conflict, have them resolve it and open a PR.-->
+An issue is a unit of work registered on GitHub: something to be built, fixed or figured out. In Driverless, we type issues as follows:
+
+- **Epic:** a big chunk of work that can span multiple weeks. Epics are not worked on directly, they're broken down into tasks.
+- **Task:** a piece of work that can be done in a single week, since we work in weekly sprints. If a task doesn't fit in a week, that's a sign it should be subdivided into smaller tasks (or that it's actually an epic in disguise).
+- **Bug:** something that's broken and needs fixing.
+
+If you've already had some contact with the Open Source world, you're going to notice the way we type our issues is a bit different than what you usually see in other public repositories. The reason we divide them this way is because our project works in yearly seasons, with a well established timeplan, and so dividing up work by size works better for us.
+
+Normally, projects that are community contributed don't have the luxury of coordinating everyone involved with timely meetings and scheduled shifts, so they rely more on different issue types and other metadata.
+
+Issues also use **labels**, most of them referring to the modules of the team's projects. For example, `perception` for issues related to the perception module, or `actuator` for issues related to the steering or brake actuators. Use them! They make it much easier to find who should look at what.
+
+To make documenting easier, issues have **templates** for different purposes. Pick the right one and fill it in, future you (and your teammates) will thank you.
+
+Every issue should also have an **assignee**: whoever is responsible for getting it done. Unassigned issues tend to sit around forever because everyone assumes someone else has it.
+
+The workflow goes like this:
+
+1. Create an issue as a **sub-issue of an epic**. Orphan tasks make it hard to see the bigger picture.
+2. Create a branch for that issue **from `main`**. GitHub can also create the branch for you straight from the issue page, which handles the linking too.
+3. Work on it, committing as you go (conventional commits, remember?).
+4. Open a pull request when you're done (or as draft when it's ready for eyes).
+
+Epics should be created by the Head of the area, as they define most of the long plan work of the team. Talk to you Head if you have any difficulties classifying issues and organize them.
+
+#### Pull Requests
+
+The pull request is how your work gets from your branch into `main`. Everything you learned about opening PRs in the Git guide applies here, plus a few team rules:
+
+- `main` is **protected**, which means nobody can push to it directly. The only way in is through a pull request.
+- Every PR needs **at least one approval from another team member** before it can be merged into `main`. Yes, even if you're sure it's fine. Especially if you're sure it's fine.
+- PRs also have **templates**. Fill them in! The goal is to properly document the proposed solution: what was done, why it was done that way, and how to check that it works. A PR with an empty description is a PR nobody wants to review.
+- **Link the PR to its issue.** Writing `Closes #123` in the PR description connects the two and automatically closes the issue when the PR is merged.
+- **Assign the PR** to yourself (the author), and request a review from a teammate.
+- Not done yet but want early feedback? Open a **draft PR**. It signals that the work is in progress and isn't ready to be merged, but lets others take a look and comment along the way. When it's ready, mark it as ready for review.
+- **Clean up after yourself.** Once your PR is merged, delete the branch. GitHub offers a button for that right after the merge, and it keeps the branch list from turning into a graveyard.
+
+#### The Projects tab
+
+The Projects tab is where we track and plan our work. It has different views, each with its own purpose.
+
+##### Board view
+
+This is the one you'll use the most. It only shows **task** type issues, and it's used both to plan the sprint and to track its progress while it's happening.
+
+The board is divided into 5 columns:
+
+- **Backlog:** tasks that exist but aren't planned for this sprint.
+- **Ready:** the sprint backlog. These are the tasks we committed to for the current week.
+- **In progress:** someone is working on it right now.
+- **In review:** there's an open PR waiting for approval.
+- **Done:** merged and finished.
+
+The sprint planning starts at the weekly meeting and is refined during the first shift after it, usually on the same day. That's when tasks get moved to Ready, sized properly (or split) and assigned.
+
+##### Sprint view
+
+A roadmap view that shows which issues are part of each iteration (sprint). Useful for getting the big picture of what was done, and what's planned, week by week.
+
+##### Epic view
+
+Also a roadmap view, but for epics. Epics are not assigned to iterations, since they span multiple weeks. Instead, they have a **start date** and a **target date**, so you can see at a glance how the larger pieces of work line up over time.
+
+#### What about unfinished tasks?
+
+Tasks that don't make it to Done by the end of the sprint are **not carried over** automatically. They stay open, which makes them visibly late so the team can prioritize them in the next planning. If a task keeps showing up as late, that's usually a sign it's too big and should be split.
 
 ---
 
-<!--## Week 3 — Language Refresher (C++/Python for Robotics)
+## Week 3
+
+Alrighty. With linux, a text editor/IDE and git, we have almost the whole development environment setup. The only thing we're missing now is a programming language. 
+
+### Python
 
 Coming soon.
 
+<!--
 **Resources:**
 
 - TODO: link based on team's primary language
