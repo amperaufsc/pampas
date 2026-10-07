@@ -1,5 +1,6 @@
 # Colcon build
 build/
+install/
 log/
 run/
 
