@@ -10,8 +10,8 @@ from launch.substitutions import LaunchConfiguration
 import os
    
 def generate_launch_description():
-    arquivo_left = "OAKDLR_left_22_04.yaml"
-    arquivo_right = "OAKDLR_right_22_04.yaml"
+    arquivo_left = "OAKDLR_left_04_26.yaml"
+    arquivo_right = "OAKDLR_right_04_26.yaml"
 
     return LaunchDescription([
         LaunchArg('namespace',default_value=[''],description='namespace for Node'),
