@@ -21,7 +21,7 @@ class Camera_subscriber(Node):
 
         self.subscription = self.create_subscription(
             Image,
-            '/oak/left/image_raw',
+            'image',
             self.camera_callback,  
             10)
         self.subscription 
@@ -29,8 +29,7 @@ class Camera_subscriber(Node):
         self.yolov8_pub = self.create_publisher(Yolov8Inference, "inferenceresult", 1)
         self.img_pub = self.create_publisher(Image, "inferenceimg", 1)
 
-        # self.declare_parameter('yolov8_path', 'src/as_amp/yolobot_recognition/scripts/best.pt')
-        self.declare_parameter('yolov8_path', 'src/amp_perception/yolobot_recognition/scripts/best_nano.pt')
+        self.declare_parameter('yolov8_path', 'Check yolo script path')
 
         self.yolov8_path = self.get_parameter('yolov8_path').value
 
@@ -46,13 +45,7 @@ class Camera_subscriber(Node):
         confidence = self.confidence_threshold
 
         img = bridge.imgmsg_to_cv2(data, "bgr8")
-        '''
-        img_resized = cv2.resize(img, (640, 640)) 
 
-        img_normalized = img_resized / 255.0  
-
-        results = self.model(img_normalized)
-        '''
         results = self.model(img, conf=confidence, device=0)
 
         self.yolov8_inference.header = data.header
@@ -70,8 +63,6 @@ class Camera_subscriber(Node):
                 self.inference_result.right = int(b[3])
                 self.inference_result.confidence = float(box.conf)
                 self.yolov8_inference.yolov8_inference.append(self.inference_result)
-
-            #camera_subscriber.get_logger().info(f"{self.yolov8_inference}")
 
         annotated_frame = results[0].plot()
         img_msg = bridge.cv2_to_imgmsg(annotated_frame)  
