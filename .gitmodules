@@ -4,6 +4,7 @@
 [submodule "src/fs_msgs"]
 	path = src/fs_msgs
 	url = git@github.com:amperaufsc/fs_msgs.git
+	branch = ros2
 [submodule "src/ORB-SLAM3-STEREO-FIXED"]
 	path = src/ORB_SLAM3
 	url = git@github.com:amperaufsc/ORB-SLAM3-STEREO-FIXED.git
@@ -17,6 +18,7 @@
 [submodule "src/SMACC2"]
 	path = src/SMACC2
 	url = https://github.com/robosoft-ai/SMACC2.git
+	branch = humble
 [submodule "src/velodyne-drivers"]
 	path = src/velodyne-drivers
 	url = https://github.com/amperaufsc/velodyne-drivers.git

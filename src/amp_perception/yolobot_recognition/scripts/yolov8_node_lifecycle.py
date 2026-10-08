@@ -23,8 +23,8 @@ class LifecycleCameraSubscriber(LifecycleNode):
         self.img_pub = None
         self.model = None
 
-        self.declare_parameter('yolov8_path', '/src/amp_perception/yolobot_recognition/scripts/best.pt')
-        self.declare_parameter('confidence_threshold', 0.85)
+        self.declare_parameter('script_path', 'None')
+        self.declare_parameter('confidence_threshold', 0.8)
 
         self.get_logger().info("Nó de Inferência YOLOv8 Inicializado (Unconfigured)")
 
@@ -32,12 +32,12 @@ class LifecycleCameraSubscriber(LifecycleNode):
         try:
             self.get_logger().info("Configurando o nó (Carregando Pesos do YOLO)...")
 
-            self.yolov8_path = self.get_parameter('yolov8_path').value
+            self.script_path = self.get_parameter('script_path').value
             self.confidence_threshold = self.get_parameter('confidence_threshold').value
 
             self.get_logger().info(f"Threshold: {self.confidence_threshold}")
 
-            self.model = YOLO(self.yolov8_path)
+            self.model = YOLO(self.script_path)
 
             self.yolov8_pub = self.create_lifecycle_publisher(Yolov8Inference, "inference", 1)
             self.img_pub = self.create_lifecycle_publisher(Image, "inferenceimg", 1)

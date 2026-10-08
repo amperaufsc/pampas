@@ -3,6 +3,7 @@ build/
 install/
 log/
 run/
+config/yolo_scripts/
 
 # Workspace
 .vscode/
