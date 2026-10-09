@@ -2,8 +2,11 @@
 
 The **RES (Remote Emergency System)** lets an outside operator stop the vehicle remotely, independent of the driver or the onboard software. It consists of two boards: a receiver with an STM32WL5M radio MCU, which gets the stop command over RF, and a vehicle module built around an STM32F103C8T6, mated to the receiver through a shield connector. On command, the vehicle module opens the Shutdown Circuit loop to cut power to the inverter and contactors, and switches the EBS supply to engage the autonomous braking system. It interfaces with the rest of the system through the Placão, for power, CAN and the Shutdown Circuit, and through a dedicated output to the EBS.
 
-<img width="960" height="655" alt="Image" src="https://github.com/user-attachments/assets/f3193705-9994-4583-b31a-66fe19ac004a" />
 
+<figure markdown="span">
+ <img alt="Remote Emergency System PCB schematic" scr="res.png" />
+ <figcaption>RES PCB</figcaption>
+</figure>
 
 ## Inputs:
 
