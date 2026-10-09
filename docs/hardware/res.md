@@ -4,7 +4,7 @@ The **RES (Remote Emergency System)** lets an outside operator stop the vehicle 
 
 
 <figure markdown="span">
- <img alt="Remote Emergency System PCB schematic" scr="res.png" />
+ <img alt="Remote Emergency System PCB schematic" src="res.png" />
  <figcaption>RES PCB</figcaption>
 </figure>
 
