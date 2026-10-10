@@ -40,6 +40,16 @@ Drives `Q2` → relay `K2` → `EBS_OUT`. It goes high if **any** of the upstrea
 
 
 
+<figure markdown="span">
+ <img alt="Driverless System Brake PCB schematic" src="dsb-1.png" />
+  <figcaption>DSB-1 PCB</figcaption>
+</figure>
+<figure markdown="span">
+ <img alt="Driverless System Brake PCB schematic" src="dsb-2.png" />
+  <figcaption>DSB-2 PCB</figcaption>
+</figure>
+
+
 ## Inputs:
 
 - **Power:** `VCC_EBS`: main supply, protected by an onboard eFuse (`IC2`), feeds the regulator (`U2`) and the rest of the board.
