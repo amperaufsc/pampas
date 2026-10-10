@@ -8,6 +8,7 @@ nav:
       - Overview: hardware-overview.md
       - Integration: hardware/integration.md
       - Emergency Brake System: hardware/emergency-brake-system.md
+      - Driverless System Brake: hardware/driverless-system-brake.md
       - Steering actuator: hardware/steering-actuator.md
   - Trainee section:
     - Onboarding: trainee-section/onboarding.md
