@@ -1,6 +1,7 @@
 site_name: PAMPAS
 nav:
   - Home: index.md
+  - Build and Run: build-and-run.md
   - Software modules:
       - Overview: software-overview.md
       - Integration: software/integration.md
