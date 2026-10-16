@@ -2,14 +2,15 @@
 name: Task
 about: General task or chore
 assignees: ''
+type: Task
 ---
 
-**Goal:**
+## Goal
 
 
-**Subtasks:**
+## Subtasks
 - [ ] 
 - [ ] 
 - [ ] 
 
-**Definition of done:**
+## Definition of done
