@@ -1,15 +1,17 @@
-# Pampas: Build & Run
+# Native Build
+
+This page explains how to build and run Pampas directly on your machine, without Docker. If you prefer containers, see the [Docker](docker.md) page.
 
 ## 1. Requirements
 
 - **Ubuntu 22.04**
+- **git**
 - **[ROS 2 Humble](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debs.html)**, with the desktop install and the development tools (they provide RViz, `rosdep`, `colcon` and the compilers):
 
   ```bash
   sudo apt install ros-humble-desktop ros-dev-tools
   ```
 
-- **git** (with submodule support)
 - **uv** (Python environment package manager). See the [installation guide](https://docs.astral.sh/uv/getting-started/installation/); the standalone installer is the simplest option:
 
   ```bash
@@ -18,7 +20,7 @@
 
 ## 2. Get the code
 
-Clone the repository **recursively** so that all submodules (including Pangolin and ORB_SLAM3) are downloaded:
+Clone the repository **recursively** so that all submodules are downloaded:
 
 ```bash
 git clone --recursive https://github.com/amperaufsc/pampas.git
@@ -45,10 +47,12 @@ ORB-SLAM3 and its ROS 2 wrapper must be built **before** the main packages.
 
 ### 4.1 Pangolin
 
+[Pangolin](https://github.com/stevenlovegrove/Pangolin) is the OpenGL library that ORB_SLAM3 uses for its viewer, and it is required to compile ORB_SLAM3.
+
 From the Pangolin source directory, install its prerequisites, then build and install it:
 
 ```bash
-./scripts/install_prerequisites.sh recommended
+./scripts/install_prerequisites.sh
 cmake -B build
 cmake --build build
 cd build/
@@ -64,8 +68,7 @@ From the ORB_SLAM3 source directory:
 chmod +x build.sh
 ./build.sh
 ```
-
-> **Note:** If the system freezes during the build, open the `build.sh` file and change the last line to `make -j2`.
+> **Note:** If the system freezes during the build, or the build stops with a `Killed` message, the machine has probably run out of memory (OOM). To avoid this, open the `build.sh` file and change the last line to `make -j2` (the default is `make -j4`). If it still freezes, try `make -j1`. The `-j` flag of `make` sets how many compile jobs run at the same time, and each job uses a lot of RAM.
 
 ### 4.3 ORB_SLAM3 ROS 2 package
 
@@ -83,7 +86,7 @@ Then build the package:
 colcon build --symlink-install --packages-select orbslam3_ros2
 ```
 
-> **Note:** If the system freezes during this build, add the `--parallel-workers 1` flag to the command above.
+> **Note:** The `--parallel-workers` flag of `colcon` sets how many packages are built at the same time (by default, one per CPU core). If the system freezes or runs out of memory during this build, add `--parallel-workers 1` to the command above. If it still happens, also limit the compile jobs inside each package, for example with `MAKEFLAGS=-j2 colcon build ...`.
 
 ### 4.4 Extract the ORB vocabulary
 
@@ -122,7 +125,7 @@ From the root of `pampas/`:
 colcon build --packages-up-to perception control mapper path_planning amp_utils amp_sm depthai_ros_driver amp_bringup yolobot_recognition
 ```
 
-> **Note:** If the system freezes during this build, add the `--parallel-workers 1` flag to the command above.
+> **Note:** If the system freezes or runs out of memory during this build, add the `--parallel-workers 1` flag to the command above (see the note in section 4.3).
 
 ## 6. Run
 
@@ -148,35 +151,3 @@ Then, to start the project, just run:
 ```bash
 ros2 launch amp_bringup amp_as_bringup_mapper.launch.py
 ```
-
-## Troubleshooting
-
-### Error: `libORB_SLAM3.so` cannot be found
-
-**Problem:** When running a binary that depends on ORB_SLAM3, Linux fails with an error saying it cannot find the shared library `libORB_SLAM3.so`.
-
-**Cause:** By default, the Linux dynamic loader (`ld.so`) does not search user home directories (`/home/<user>/...`) for libraries unless those paths are registered in the system cache.
-
-**Solution: permanent system-wide registration (recommended)**
-
-This registers the library folder with `ldconfig`, making it visible globally across the system.
-
-1. Add the library path to the `ldconfig` configuration directory:
-
-   ```bash
-   echo "$(realpath ~/ORB_SLAM3/lib)" | sudo tee /etc/ld.so.conf.d/orb_slam3.conf
-   ```
-
-2. Update the dynamic loader cache:
-
-   ```bash
-   sudo ldconfig
-   ```
-
-3. Verify that the system now recognizes the library:
-
-   ```bash
-   ldconfig -p | grep libORB_SLAM3
-   ```
-
-   If the command prints a line with the path to the `.so` file, the setup is complete.
