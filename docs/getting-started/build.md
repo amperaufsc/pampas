@@ -1,7 +1,5 @@
 # Native Build
 
-This page explains how to build and run Pampas directly on your machine, without Docker. If you prefer containers, see the [Docker](docker.md) page.
-
 ## 1. Requirements
 
 - **Ubuntu 22.04**
