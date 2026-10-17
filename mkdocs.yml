@@ -1,7 +1,10 @@
 site_name: PAMPAS
 nav:
-  - Home: index.md
-  - Build and Run: build-and-run.md
+  - Home: index.mds
+  - Getting Started:
+      - Instalation:
+          - Native Build: getting-started/instalation/native-build.md
+          - Docker: getting-started/instalation/docker.md
   - Software modules:
       - Overview: software-overview.md
       - Integration: software/integration.md
