@@ -1,6 +1,6 @@
 site_name: PAMPAS
 nav:
-  - Home: index.mds
+  - Home: index.md
   - Getting Started:
       - Instalation:
           - Native Build: getting-started/instalation/native-build.md
