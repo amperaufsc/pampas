@@ -20,4 +20,4 @@ You can learn about the team at our [official website](amperaracing.com) and [in
 
 ## Quick start
 
-Coming soon.
+See the [getting started](https://amperaufsc.github.io/pampas/getting-started/build/) section in the wiki.
