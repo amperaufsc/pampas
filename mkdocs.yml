@@ -1,6 +1,8 @@
 site_name: PAMPAS
 nav:
   - Home: index.md
+  - Getting Started:
+      - Build: getting-started/build.md
   - Software modules:
       - Overview: software-overview.md
       - Integration: software/integration.md
