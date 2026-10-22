@@ -198,20 +198,89 @@ Alrighty. With linux, a text editor/IDE and git, we have almost the whole develo
 
 ### Python
 
-Coming soon.
+Currently in Driverless the main programming language we use is Python.
 
-<!--
-**Resources:**
+For our project, there are advantages and disadvantages of using Python. Because Python is a beginner friendly and simple to use scripting language, we don't need to concern ourselves with many of the technical challenges that accompany the use of some industry grade tools, namely C++. Moreover, the Python ecossystem for robotics is incredibly rich, which also helps things move faster, even if you're just starting to program. Basically, it's quick to use and deploy, and the entry barrier is low; perfect for an F-SAE team like us.
 
-- TODO: link based on team's primary language
-- If C++: [LearnCpp — pointers/memory sections](https://www.learncpp.com/), CMake basics guide
-- If Python: virtual environments (`venv`/`conda`), packaging basics
+However, it's slow. For systems requiring real-time interaction with very low-latency, it's not the optimal tool, so it's not usually used for production/industrial grade solutions.
 
-**Focus on:** what's different from intro CS courses — build systems, memory management (C++) or environment management (Python). Skip basic syntax they already know.
+For PAMPAS' current level of software maturity, the advantages of Python still outweight the disadvantages. Slowly, but surely, as we test and validade each subsystem and knowledge gets consolidated in the team, we grow more ready to deal with more sofisticated tools and move torwards more efficient solutions.
 
-**Checkpoint exercise:** TODO
+If you are a total beginner, we point you towards the CS50's introductory course to programming with Python by Harvard:
+
+- CS50 — [Introduction to Programming with Python](https://cs50.harvard.edu/python/)
+
+It's free and good.
+
+### Becoming a good programmer
+
+Just learning how to code doesn't make you a good programmer, however. The Missing Semester course has two classes full of great tips on how to improve your code quality which we strongly recommend you having a look at, after you've finished the course above:
+
+- MIT Missing Semester — [Beyond the Code](https://missing.csail.mit.edu/2026/beyond-code/)
+- MIT Missing Semester — [Code Quality](https://missing.csail.mit.edu/2026/code-quality/)
+
+All of the material here has exercises for you to do. Don't hesitate to reach out to your Head or another colleague if you need help understanding something!
+
+### Working with uv
+
+Project management is a kind of advanced topic, but we need to at least introduce it here as you're going to need it very soon for the Driverless Challenge.
+
+A little bit of context before talking about the tool itself. When working in programming projects, you almost always don't write all of the code your software needs to work. In fact, it wouldn't be unusual for most of your software to be composed of other people's work. That happens for two main reasons: good code is written to be reusable; and there is a huge collection of [open source software](https://en.wikipedia.org/wiki/Open-source_software) online. We call reusable code that is shared for use a _library_.
+
+In order to facilitate the process of acquiring a library, registering it as a dependency of your project (configuring it so it requires the library to be available in order to run), managing interdepdencies between libraries, building, testing, running etc, we use a tool known as a package/project manager.
+
+There are a bunch of different project managers for different programming languages/development platforms. Rust, for instance, becomes a much easier programming language to work with thanks to [cargo](https://doc.rust-lang.org/cargo/).
+
+Taking inspiration from Rust's cargo, [Astral created uv](https://docs.astral.sh/uv/) for Python.
+
+- [What is uv and why it's so useful in Python?](https://manueltgomes.com/development/python/what-is-uv-and-why-its-so-useful-in-python-development/)
+
+We use it (alongside other tools) to manage PAMPAS' components written in Python. We highghly recommend you use it for managing your own projects as well.
 
 ---
+
+## Week 4
+
+### ROS
+
+The Robot Operating System (ROS), despite being called that way, is not an operating system. It's an ecoystem for development in robotics. 
+
+The main problem ROS solves is managing the communication between different modules of the system that must run concurrently.
+
+ Making different programs work while they operate in parallel and share information falls under the umbrella of concurrent (or parallel) computing. Even for computer scientists and experienced programmers, coding concurrent programs is a challenge. 
+
+in order to lower the barrier of entrance (especially for engineers) in robotics development, ROS implements the communication middleware required for robots to work properly and abstracts away that complexity using a simple and friendly interface.
+
+Different modules of the system are represented by Nodes. Each Node can listen (subscribe) or share (publish) information about any number of arbritary topics, and through the messages that carry that information the Nodes can communicate with each other.
+
+We recommend you reading through the official tutorial, as any ROS guide we attempt to create here will fall short of the completeness and didadics of ROS' own documentation:
+
+- ROS2 — [Tutorials](https://docs.ros.org/en/humble/Tutorials.html)
+
+The recommended operating system for running ROS is (as of the writting of this guide), Ubuntu. The version of Ubuntu depends on the version of ROS you want to use. Here we linked the tutorials for the Humble Hawksbill version because it's one of the most popular and consolidated versions as well as the one we currently use in the team.
+
+If you're not on Ubuntu (or simply don't want to install ROS in your machine), you can run it iniside a [container](https://www.docker.com/resources/what-container/). In the [mini-PAMPAS official repository](https://github.com/amperaufsc/mini-pampas), there is a Dockerfile that builds an image for a container with support for ROS and the other tools used in the tutorials, with instructions on how to build and run it. 
+
+Feel free to build your own if you feel so inclined. There are [base images for most ROS versions](https://hub.docker.com/_/ros/), so you don't really need to add much to it.
+
+---
+
+<!--
+## Week 5
+
+### Mobile robotics and our pipeline
+
+---
+
+## Week 6
+
+### About F-SAE and the team
+
+---
+
+## Week 7
+
+
 
 ## Week 4 — Driverless Overview & System Architecture
 
