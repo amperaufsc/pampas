@@ -7,7 +7,7 @@ How to visualise ROS 2 topics and bags in Foxglove Studio.
 - Pampas built and set up. You can check on [Build](../build.md) page
 - A bag in `mcap` format (see [Record and Play Bags](record-and-play.md))
 
-> **Note:** only the `fs_msgs` package is required, so you can build just it in your workspace:
+> If you just need to **visualize** data recorded in a bag, the only ROS package you need is `fs_msgs`. You can build it with:
 >
 > ```bash
 > colcon build --packages-select fs_msgs

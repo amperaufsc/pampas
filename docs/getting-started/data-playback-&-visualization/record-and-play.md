@@ -11,11 +11,11 @@ How to record ROS 2 bags in `mcap` format and play them back.
 sudo apt install ros-humble-rosbag2-storage-mcap
 ```
 
-If you just need to visualize data recorded in a bag, the only requirement is the `fs_msgs` package. You can build it with:
-
-```bash
-colcon build --packages-select fs_msgs
-```
+> If you just need to **visualize** data recorded in a bag, the only ROS package you need is `fs_msgs`. You can build it with:
+>
+> ```bash
+> colcon build --packages-select fs_msgs
+> ```
 
 ## Record a bag
 
