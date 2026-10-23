@@ -13,6 +13,7 @@ nav:
       - Overview: hardware-overview.md
       - Integration: hardware/integration.md
       - Emergency Brake System: hardware/emergency-brake-system.md
+      - Remote Emergency System: hardware/res.md
       - Steering actuator: hardware/steering-actuator.md
   - Trainee section:
     - Onboarding: trainee-section/onboarding.md
