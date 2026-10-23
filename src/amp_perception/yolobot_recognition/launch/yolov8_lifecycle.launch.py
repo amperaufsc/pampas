@@ -4,19 +4,13 @@ from launch.actions import DeclareLaunchArgument as LaunchArg
 from launch.substitutions import LaunchConfiguration
 import os
 from ament_index_python.packages import get_package_share_directory
-
+from pathlib import Path
 
 def generate_launch_description():
 
     confidence = 0.90
-
-    arquivo = 'best_19_05.pt'
-
-    yolov8_path = os.path.join(
-       get_package_share_directory('yolobot_recognition'), 
-       'scripts', 
-       arquivo
-)
+    arquivo = 'best.pt'
+    script_path = str(Path.home() / "pampas" / "config" / "yolo_scripts" / arquivo)
 
     return LaunchDescription([
         LaunchArg('namespace', default_value=[''], description='Namespace for node'),
@@ -36,7 +30,7 @@ def generate_launch_description():
                 ],
             parameters=[
             {'confidence_threshold': confidence},
-            {'yolov8_path': yolov8_path}
+            {'script_path': script_path}
         ]
     )
     ])
