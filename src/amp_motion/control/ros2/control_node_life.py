@@ -19,7 +19,7 @@ from longitudinal_control.longitudinal_controller import Longitudinal_Controller
 class ControlNode(LifecycleNode):
     def __init__(self):
         super().__init__('control_node')
-        self.get_logger().info('Path Unconfigured. (o_o)')
+        self.get_logger().info('Control Unconfigured')
         self.subscription_path = None
         self.subscription_odom = None
         self.publisher_ = None
@@ -31,7 +31,7 @@ class ControlNode(LifecycleNode):
         self.timer = None
 
     def on_configure(self, state: LifecycleState) -> TransitionCallbackReturn:
-        self.get_logger().info('Configuring PathNode... (o.o)')
+        self.get_logger().info('Configuring Control Node')
         self.subscription_path = self.create_subscription(Path, '/path_concatenated', self.path_callback, 10)
         self.subscription_odom = self.create_subscription(Odometry, 'odom', self.odom_callback, 10)
 
@@ -69,7 +69,7 @@ class ControlNode(LifecycleNode):
     
 
     def on_activate(self, state: LifecycleState) -> TransitionCallbackReturn:
-        self.get_logger().info('Activating ControlNode... (o‿o)')
+        self.get_logger().info('Activating Control Node')
 
         self.publisher_ = self.create_lifecycle_publisher(ControlCommand, 'control', 10)
         self.speed_publisher_ = self.create_lifecycle_publisher(Float32, '/speed', 10)
@@ -84,7 +84,7 @@ class ControlNode(LifecycleNode):
 
 
     def on_deactivate(self, state: LifecycleState) -> TransitionCallbackReturn:
-        self.get_logger().info('Deactivating ControlNode... (-‿-)')
+        self.get_logger().info('Deactivating Control Node')
 
         if self.timer is not None:
             self.destroy_timer(self.timer)
@@ -95,7 +95,7 @@ class ControlNode(LifecycleNode):
 
 
     def on_cleanup(self, state: LifecycleState) -> TransitionCallbackReturn:
-        self.get_logger().info('Cleaning up ControlNode...(x‿x)')
+        self.get_logger().info('Cleaning up Control Node')
 
         self._destroy_subscriptions()
 
@@ -107,7 +107,7 @@ class ControlNode(LifecycleNode):
 
 
     def on_shutdown(self, state: LifecycleState) -> TransitionCallbackReturn:
-        self.get_logger().info('Shutting down ControlNode... (x_x)')
+        self.get_logger().info('Shutting down Control Node')
 
         if self.timer is not None:
             self.destroy_timer(self.timer)
