@@ -6,10 +6,8 @@ from rclpy.lifecycle import LifecycleState
 from rclpy.lifecycle import TransitionCallbackReturn
 from nav_msgs.msg import Odometry
 from nav_msgs.msg import Path
-from geometry_msgs.msg import Pose
 from geometry_msgs.msg import PoseStamped
 from std_msgs.msg import Float32
-from rclpy.duration import Duration
 import numpy as np
 from fs_msgs.msg import ControlCommand
 from lateral_control.kls_lateral_motion_controller import KLS_Lateral_Motion_Controller
@@ -17,8 +15,6 @@ from include.kls_lateral_motion_controller_gains import KLS_Lateral_Motion_Contr
 from include.vehicle_parameters import Vehicle_Parameters
 from include.vehicle_state import Vehicle_State
 from longitudinal_control.longitudinal_controller import Longitudinal_Controller
-from longitudinal_control.PID_controller import PIDController
-import yaml
 
 class ControlNode(LifecycleNode):
     def __init__(self):
