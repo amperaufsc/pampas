@@ -3,6 +3,9 @@ nav:
   - Home: index.md
   - Getting Started:
       - Build: getting-started/build.md
+      - Data Playback & Visualization :
+          - Record and Play: getting-started/data-playback-&-visualization/record-and-play.md
+          - "Foxglove: Quick Start": getting-started/data-playback-&-visualization/foxglove-quick-start.md
   - Software modules:
       - Overview: software-overview.md
       - Integration: software/integration.md
@@ -11,6 +14,7 @@ nav:
       - Integration: hardware/integration.md
       - Emergency Brake System: hardware/emergency-brake-system.md
       - Driverless System Brake: hardware/driverless-system-brake.md
+      - Remote Emergency System: hardware/res.md
       - Steering actuator: hardware/steering-actuator.md
   - Trainee section:
     - Onboarding: trainee-section/onboarding.md
