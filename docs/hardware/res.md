@@ -1,4 +1,4 @@
-# RES (Vehicle Module)
+# Remote Emergency System (RES)
 
 The Remote Emergency System (RES) is an outside operator that send "go" and "stop" signals to the vehicle remotely, independent of the driver or the onboard software. It consists of two boards: a receiver with an STM32WL5M radio MCU, which gets the go/stop command over RF, and a vehicle module built around an STM32F103C8T6, mated to the receiver through a shield connector. On Go command, the preselected autonomous mission is started. On Stop command, the vehicle module opens the Shutdown Circuit loop to cut the EBS supply to engage the autonomous braking system.It interfaces with the rest of the system through the Backplane, for power, CAN and the Shutdown Circuit, and through a dedicated output to the EBS.
 
