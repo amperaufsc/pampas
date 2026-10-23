@@ -1,11 +1,9 @@
 #!/usr/bin/env python3
+
 import rclpy
-#---------------------
-#Lifecycle imports
 from rclpy.lifecycle import LifecycleNode
 from rclpy.lifecycle import LifecycleState
 from rclpy.lifecycle import TransitionCallbackReturn
-#---------------------
 from nav_msgs.msg import Odometry
 from nav_msgs.msg import Path
 from geometry_msgs.msg import Pose
@@ -22,17 +20,6 @@ from longitudinal_control.longitudinal_controller import Longitudinal_Controller
 from longitudinal_control.PID_controller import PIDController
 import yaml
 
-#---------------------
-# Debbug Messages:
-#   self.get_logger().info('Path Unconfigured. (o_o)')
-#   self.get_logger().info('Configuring PathNode... (o.o)')
-#   self.get_logger().info('Activating PathNode... (o‿o)')
-#   self.get_logger().info('Deactivating PathNode... (-‿-)')
-#   self.get_logger().info('Cleaning up PathNode...(x‿x)')
-#   self.get_logger().info('Shutting down PathNode... (x_x)')
-#---------------------
-
-
 class ControlNode(LifecycleNode):
     def __init__(self):
         super().__init__('control_node')
@@ -47,14 +34,6 @@ class ControlNode(LifecycleNode):
         self.path_publisher_ = None
         self.timer = None
 
-    #---------------------
-    #Base lifecycle callback
-    # def on_activate(self, state: LifecycleState) -> TransitionCallbackReturn:
-    #     return TransitionCallbackReturn.SUCCESS #More common and simple
-    #     return super().on_activate(state) #Used in activate and deactivate because it's more sensitive
-    #---------------------
-    
-
     def on_configure(self, state: LifecycleState) -> TransitionCallbackReturn:
         self.get_logger().info('Configuring PathNode... (o.o)')
         self.subscription_path = self.create_subscription(Path, '/path_concatenated', self.path_callback, 10)
@@ -67,6 +46,7 @@ class ControlNode(LifecycleNode):
         self.declare_parameter('Key', 1.7)
         self.declare_parameter('Keh', 1.5)
         self.declare_parameter('speed', 1.0)
+
         self.declare_parameter('sampling_period', 0.01)
 
 
@@ -85,7 +65,6 @@ class ControlNode(LifecycleNode):
         kls_lateral_motion_controller_gains = KLS_Lateral_Motion_Controller_Gains(self.Key, self.Keh) #lateral error gain - orientation error gain
         self.control = KLS_Lateral_Motion_Controller(vehicle_parameters, kls_lateral_motion_controller_gains)
         self.longitudinal_controller = Longitudinal_Controller(self.Kp, self.Ki, self.Kd, self.T, self.speed)
-        #self.PID_Controller = PIDController(Kp, Ki, Kd, T)
         self.received_path= False
         self.received_odom = False
         self.closest_index = 0
@@ -182,9 +161,7 @@ class ControlNode(LifecycleNode):
 
     def timer_callback(self):
         if self.received_odom:                
-            #speed = ((self.body_linear_velocity_x)**2 + (self.body_linear_velocity_y)**2)**0.5
             speed = self.body_linear_velocity_x
-            #self.get_logger().info('Speed: "%f"' %speed)
             speed_msg = Float32()
             speed_msg.data = speed
 
