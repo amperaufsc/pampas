@@ -1,10 +1,10 @@
-# DSB:
+# Driverless System Brake (DSB)
 
 The DSB is the board that decides, independently of the Jetson, when the brake should be triggered. It receives watchdog and error signals from the computing unit, combines them with the state of the Shutdown Circuit, and uses that logic to drive two relays: one that opens the SDC itself, and another that energizes the EBS output. The DSB board plugs into the Backplane through two headers — J1 and J5 — and exposes three local Micro-Fit connectors (`JETSON`, `EBS`, `SC`) plus a 4-pin test header (`J4`) mirroring the Jetson signals.
 
-## Logic Description
+## Logic description
 
-The EBS-open decision is built from three OR/AND stages, each feeding the next:
+The EBS-open decision is built from three OR/AND stages, each feeding the next.
 
 ### 1. Jetson failure detection
 
@@ -49,40 +49,29 @@ Drives `Q2` → relay `K2` → `EBS_OUT`. It goes high if **any** of the upstrea
   <figcaption>DSB-2 PCB</figcaption>
 </figure>
 
+## Inputs
 
-## Inputs:
+| Group | Signal | Description |
+|---|---|---|
+| Power | `VCC_EBS` | Main supply, protected by onboard eFuse (`IC2`); feeds regulator (`U2`) and the rest of the board |
+| Power | `GND` | Ground |
+| Shutdown Circuit | `SC_in` | SDC signal from the Backplane (originally from the RES) |
+| Reset | `RST` | Board reset, tied to the reset pin of flip-flop `U1` and reset button `S1` |
+| Watchdog (`JETSON` connector) | `WATCHDOG` | Watchdog pulse train from the computing unit |
+| Watchdog (`JETSON` connector) | `JETSON_BYPASS` | Bypass command from the Jetson |
+| Watchdog (`JETSON` connector) | `JETSON_EBS` | Direct EBS-open command from the Jetson |
 
-### Power: `VCC_EBS`:
-Main supply, protected by an onboard eFuse (`IC2`), feeds the regulator (`U2`) and the rest of the board.
+## Outputs
 
-### Shutdown Circuit: `SC_in`:
- SDC signal coming from the Placão (originally from the RES)
-
-### Reset: `RST`:
- Board reset, tied to the reset pin of the onboard flip-flop (`U1`) and to the reset button (`S1`).
-
-### Watchdog (`JETSON` connector):
-  `WATCHDOG`: watchdog pulse train coming from the computing unit.
-
-  `JETSON_BYPASS`: bypass command from the Jetson.
-
-  `JETSON_EBS`: direct EBS-open command from the Jetson.
-
-### GND.
-
-## Outputs:
-
-### Shutdown Circuit: `SC_out`: 
-SDC signal after passing through the DSB, forwarded to the Backplane (and from there to the AMPSEAL).
-
-### EBS command: `EBS_OUT`:
-12 V switched onto this line whenever the combinational logic decides the brake should open — sent both to the Backplane/AMPSEAL and to a local `EBS` connector for an external actuator.
-
-### Status (to the Backplane):
-`DSB_ERRO`: general error flag.
-
-`ESTADO_SC_12`: state of the SDC loop as seen locally.
-  
-`FEEDBACK_WATCHDOG`: watchdog feedback sent back to the Jetson.
-  
-`Indicator LEDs (onboard only):` **`3V3`, `WD`, `ERR`, `ERR_JETSON`, `OPEN_EBS`.**
+| Group | Signal | Description |
+|---|---|---|
+| Shutdown Circuit | `SC_out` | SDC signal after passing through the DSB; forwarded to the Backplane (then to the AMPSEAL) |
+| EBS command | `EBS_OUT` | 12 V switched onto this line when the combinational logic decides the brake should open; sent to the Backplane/AMPSEAL and to the local `EBS` connector for an external actuator |
+| Status (to Backplane) | `DSB_ERRO` | General error flag |
+| Status (to Backplane) | `ESTADO_SC_12` | State of the SDC loop as seen locally |
+| Status (to Backplane) | `FEEDBACK_WATCHDOG` | Watchdog feedback sent back to the Jetson |
+| Indicator LEDs (onboard only) | `3V3` | Indicator LED |
+| Indicator LEDs (onboard only) | `WD` | Indicator LED |
+| Indicator LEDs (onboard only) | `ERR` | Indicator LED |
+| Indicator LEDs (onboard only) | `ERR_JETSON` | Indicator LED |
+| Indicator LEDs (onboard only) | `OPEN_EBS` | Indicator LED |
