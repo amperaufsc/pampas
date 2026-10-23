@@ -15,6 +15,7 @@ from include.kls_lateral_motion_controller_gains import KLS_Lateral_Motion_Contr
 from include.vehicle_parameters import Vehicle_Parameters
 from include.vehicle_state import Vehicle_State
 from longitudinal_control.longitudinal_controller import Longitudinal_Controller
+from rcl_interfaces.msg import (ParameterDescriptor, ParameterType, FloatingPointRange, SetParametersResult)
 
 class ControlNode(LifecycleNode):
     def __init__(self):
@@ -42,9 +43,7 @@ class ControlNode(LifecycleNode):
         self.declare_parameter('Key', 1.7)
         self.declare_parameter('Keh', 1.5)
         self.declare_parameter('speed', 1.0)
-
         self.declare_parameter('sampling_period', 0.01)
-
 
         self.Kp = self.get_parameter('Kp').value
         self.Ki = self.get_parameter('Ki').value
@@ -53,6 +52,8 @@ class ControlNode(LifecycleNode):
         self.Keh = self.get_parameter('Keh').value
         self.speed = self.get_parameter('speed').value
         self.T = self.get_parameter('sampling_period').value
+
+        self.add_on_set_parameters_callback(self._on_params)
 
         self.index = 0
 
@@ -66,6 +67,25 @@ class ControlNode(LifecycleNode):
         self.closest_index = 0
 
         return TransitionCallbackReturn.SUCCESS
+
+    def _on_params(self, params):
+        for p in params:
+            if p.name == 'Kp':
+                self.Kp = p.value
+            elif p.name == 'Ki':
+                self.Ki = p.value
+            elif p.name == 'Kd':
+                self.Kd = p.value
+            elif p.name == 'Key':
+                self.Key = p.value
+            elif p.name == 'Keh':
+                self.Keh = p.value
+            elif p.name == 'speed':
+                self.speed = p.value
+            elif p.name == 'sampling_period':
+                self.T = p.value
+                
+        return SetParametersResult(successful=True)
     
 
     def on_activate(self, state: LifecycleState) -> TransitionCallbackReturn:
@@ -254,7 +274,6 @@ class ControlNode(LifecycleNode):
             if sub is not None:
                 self.destroy_subscription(sub)
                 setattr(self, name, None)
-
 
 def main(args=None):
     rclpy.init(args=args)
