@@ -7,13 +7,11 @@ from ament_index_python.packages import get_package_share_directory
 from pathlib import Path
 
 def generate_launch_description():
-
-    confidence = 0.90
-    arquivo = 'best.pt'
-    script_path = str(Path.home() / "pampas" / "config" / "yolo_scripts" / arquivo)
+    from_home_config_path = str(Path.home() / "pampas" / "config" / 'system_params.yaml')
 
     return LaunchDescription([
-        LaunchArg('namespace', default_value=[''], description='Namespace for node'),
+        LaunchArg('system_config_path', default_value=[from_home_config_path], description='System parameter yaml path'), 
+        LaunchArg('namespace', default_value=['perception'], description='Namespace for node'),
         LaunchArg('image',default_value=['/oak/left/image_raw'],description='img topic'),
         LaunchArg('inference',default_value=['inference'],description='bounding box coordenates on image'),
         LaunchArg('inferenceimg',default_value=['inferenceimg'],description='img with boundingbox'),
@@ -29,8 +27,7 @@ def generate_launch_description():
                 ('inferenceimg',LaunchConfiguration('inferenceimg'))
                 ],
             parameters=[
-            {'confidence_threshold': confidence},
-            {'script_path': script_path}
-        ]
+                LaunchConfiguration('system_config_path')
+            ]
     )
     ])
