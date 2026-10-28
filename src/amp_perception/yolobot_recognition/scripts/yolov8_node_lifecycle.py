@@ -9,7 +9,7 @@ from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 from yolov8_msgs.msg import InferenceWithConfidence
 from yolov8_msgs.msg import Yolov8Inference
-import logging # Used to turn get_logger().info() if YOLO into get_logger().warn()
+import logging # Used to silence get_logger().info() from YOLO
 
 bridge = CvBridge()
 
