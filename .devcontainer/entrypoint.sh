@@ -1,0 +1,12 @@
+#!/bin/bash
+
+set -e
+source /opt/ros/humble/setup.bash
+cd /pampas
+
+colcon build --symlink-install --packages-up-to perception control mapper \
+    path_planning amp_utils amp_sm depthai_ros_driver amp_bringup \
+    yolobot_recognition orbslam3_ros2
+
+source /pampas/install/setup.bash
+exec "$@"

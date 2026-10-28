@@ -1,0 +1,34 @@
+# Base config, OS-neutral. Combine with ONE display override:
+#   compose.x11.yml      Linux on X11 (also works on Wayland via XWayland)
+#   compose.wayland.yml  Linux on Wayland
+#   compose.wsl.yml      Windows via WSL2 + WSLg
+services:
+  pampas:
+    image: pampas:latest
+    container_name: pampas
+    stdin_open: true
+    tty: true
+
+    build:
+      context: .
+      dockerfile: ./.devcontainer/Dockerfile
+
+    environment:
+      - ROS_DOMAIN_ID=67
+      - TERM=${TERM:-xterm-256color}
+      - COLORTERM=truecolor
+
+    volumes:
+      - .:/pampas
+
+    develop:
+      watch:
+        # Automatically rebuild on updates to these files
+        - action: rebuild
+          path: ./pyproject.toml
+        - action: rebuild
+          path: ./uv.lock
+        - action: rebuild
+          path: ./.devcontainer/Dockerfile
+        - action: rebuild
+          path: ./.devcontainer/entrypoint.sh
