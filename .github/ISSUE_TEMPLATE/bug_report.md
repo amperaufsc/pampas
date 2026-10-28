@@ -2,20 +2,21 @@
 name: Bug report
 about: Report a bug
 assignees: ''
+type: Bug
 ---
 
-**Steps to reproduce:**
+## Steps to reproduce
 1. 
 2. 
 3. 
 
-**Expected behavior:**
+## Expected behavior
 
 
-**Actual behavior:**
+## Actual behavior
 
 
-**Environment:** 
+## Environment
 
 
-**Screenshots/logs:**
+## Screenshots/logs
