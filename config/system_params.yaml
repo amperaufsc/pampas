@@ -1,6 +1,5 @@
 /yolo_node:
   ros__parameters:
     confidence_threshold: 0.8
-    script_path: '~/pampas/config/yolo_scripts/best.pt'
+    yolo_weight_path: '~/pampas/config/yolo_weights/best.pt'
     use_sim_time: false
-
