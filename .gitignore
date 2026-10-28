@@ -3,8 +3,7 @@ build/
 install/
 log/
 run/
-config/yolo_scripts/
-
+config/yolo_weights/
 # Workspace
 .vscode/
 
