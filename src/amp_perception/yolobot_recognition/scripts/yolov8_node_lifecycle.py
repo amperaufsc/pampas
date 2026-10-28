@@ -24,7 +24,7 @@ class LifecycleCameraSubscriber(LifecycleNode):
         self.img_pub = None
         self.model = None
 
-        # Desable get_logger().info() from YOLO
+        # Disable get_logger().info() from YOLO
         logging.getLogger('ultralytics').setLevel(logging.WARNING)
 
         # Declare parameters
