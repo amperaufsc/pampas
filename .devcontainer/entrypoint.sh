@@ -4,6 +4,7 @@ set -e
 source /opt/ros/humble/setup.bash
 cd /pampas
 
+apt update
 rosdep install --from-paths src --ignore-src -r -y
 colcon build --symlink-install \
   --packages-up-to perception control mapper path_planning \

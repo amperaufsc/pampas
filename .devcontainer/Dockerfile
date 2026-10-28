@@ -13,7 +13,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 # --- uv ---
-COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+# Fixed uv to a specific digest to avoid needing to rebuild every build layer
+# under it everytime uv changes the 'latest' tag.
+COPY --from=ghcr.io/astral-sh/uv:latest@sha256:8b7774a14bb3abde914fda03efcb83f1f7e9163124e5c13e7fb4cc825293f5fa /uv /uvx /bin/
 ENV UV_PROJECT_ENVIRONMENT=/opt/venv
 # venv can see system ROS packages (rclpy)
 RUN uv venv --system-site-packages /opt/venv
@@ -68,7 +70,12 @@ RUN echo 'source /opt/ros/humble/setup.bash' >> /root/.bashrc \
     /root/.bashrc
     # && echo 'PS1="\[\e[32m\]\u@\h\[\e[0m\]:\[\e[34m\]\w\[\e[0m\]\$ "' >> /root/.bashrc
 
-COPY docker/entrypoint.sh /entrypoint.sh
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    ros-humble-pcl-conversions ros-humble-slam-toolbox libpcl-dev \
+    libunwind-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+COPY .devcontainer/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["bash"]

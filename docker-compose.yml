@@ -10,8 +10,8 @@ services:
     tty: true
 
     build:
-      context: ./
-      dockerfile: ./docker/Dockerfile
+      context: .
+      dockerfile: ./.devcontainer/Dockerfile
 
     environment:
       - ROS_DOMAIN_ID=67
@@ -28,3 +28,7 @@ services:
           path: ./pyproject.toml
         - action: rebuild
           path: ./uv.lock
+        - action: rebuild
+          path: ./docker/Dockerfile
+        - action: rebuild
+          path: ./docker/entrypoint.sh
