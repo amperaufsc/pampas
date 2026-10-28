@@ -1,12 +1,10 @@
 #!/usr/bin/env python3
 
 from ultralytics import YOLO
-import cv2
 import rclpy
 from rclpy.lifecycle import LifecycleNode, State, TransitionCallbackReturn
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
-
 from yolov8_msgs.msg import InferenceWithConfidence
 from yolov8_msgs.msg import Yolov8Inference
 
@@ -26,11 +24,11 @@ class LifecycleCameraSubscriber(LifecycleNode):
         self.declare_parameter('script_path', 'None')
         self.declare_parameter('confidence_threshold', 0.8)
 
-        self.get_logger().info("Nó de Inferência YOLOv8 Inicializado (Unconfigured)")
+        self.get_logger().info("Yolo node initialized (Unconfigured)")
 
     def on_configure(self, state: State) -> TransitionCallbackReturn:
         try:
-            self.get_logger().info("Configurando o nó (Carregando Pesos do YOLO)...")
+            self.get_logger().info("Configuring Yolo Node") 
 
             self.script_path = self.get_parameter('script_path').value
             self.confidence_threshold = self.get_parameter('confidence_threshold').value
@@ -50,21 +48,21 @@ class LifecycleCameraSubscriber(LifecycleNode):
 
             return TransitionCallbackReturn.SUCCESS
         except Exception as e:
-            self.get_logger().error(f"Erro na configuração: {e}")
+            self.get_logger().error(f"Error when configuring: {e}")
             return TransitionCallbackReturn.ERROR
 
     def on_activate(self, state: State) -> TransitionCallbackReturn:
-        self.get_logger().info("Ativando a Inferência YOLOv8...")
+        self.get_logger().info("Activating Yolo Node")
         super().on_activate(state)
         return TransitionCallbackReturn.SUCCESS
 
     def on_deactivate(self, state: State) -> TransitionCallbackReturn:
-        self.get_logger().info("Desativando a Inferência YOLOv8...")
+        self.get_logger().info("Deactivating Yolo Node")
         super().on_deactivate(state)
         return TransitionCallbackReturn.SUCCESS
 
     def on_cleanup(self, state: State) -> TransitionCallbackReturn:
-        self.get_logger().info("Limpando a memória do nó...")
+        self.get_logger().info("Cleaning up Yolo Node")
 
         self.destroy_subscription(self.subscription)
         self.destroy_lifecycle_publisher(self.yolov8_pub)
@@ -78,7 +76,7 @@ class LifecycleCameraSubscriber(LifecycleNode):
         return TransitionCallbackReturn.SUCCESS
 
     def on_shutdown(self, state: State) -> TransitionCallbackReturn:
-        self.get_logger().info("Encerrando o nó com segurança...")
+        self.get_logger().info("Yolo Node Shutdown")
         self.destroy_subscription(self.subscription)
         self.destroy_lifecycle_publisher(self.yolov8_pub)
         self.destroy_lifecycle_publisher(self.img_pub)
