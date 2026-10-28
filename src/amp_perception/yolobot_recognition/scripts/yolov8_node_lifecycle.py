@@ -3,10 +3,13 @@
 from ultralytics import YOLO
 import rclpy
 from rclpy.lifecycle import LifecycleNode, State, TransitionCallbackReturn
+from rcl_interfaces.msg import ParameterDescriptor, FloatingPointRange, SetParametersResult
+import os
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 from yolov8_msgs.msg import InferenceWithConfidence
 from yolov8_msgs.msg import Yolov8Inference
+import logging # Used to turn get_logger().info() if YOLO into get_logger().warn()
 
 bridge = CvBridge()
 
@@ -21,8 +24,30 @@ class LifecycleCameraSubscriber(LifecycleNode):
         self.img_pub = None
         self.model = None
 
-        self.declare_parameter('script_path', 'None')
-        self.declare_parameter('confidence_threshold', 0.8)
+        # Desable get_logger().info() from YOLO
+        logging.getLogger('ultralytics').setLevel(logging.WARNING)
+
+        # Declare parameters
+        self.declare_parameter(
+            'yolo_weight_path',
+            'None',
+            descriptor=ParameterDescriptor(
+                description='Yolo weight path used for cone detection'
+            )
+        )       
+              
+        self.declare_parameter(
+            'confidence_threshold',
+            0.8,
+            descriptor=ParameterDescriptor(
+                description='Minimum confidence (0.0 to 1.0) for a cone detection to be accepted',
+                floating_point_range=[FloatingPointRange(
+                    from_value=0.0,
+                    to_value=1.0,
+                    step=0.0
+                )]
+            )
+        )
 
         self.get_logger().info("Yolo node initialized (Unconfigured)")
 
@@ -30,12 +55,15 @@ class LifecycleCameraSubscriber(LifecycleNode):
         try:
             self.get_logger().info("Configuring Yolo Node") 
 
-            self.script_path = self.get_parameter('script_path').value
+            # Initialize parameters
+            self.weigth_path = os.path.expanduser(self.get_parameter('yolo_weight_path').value)
             self.confidence_threshold = self.get_parameter('confidence_threshold').value
 
-            self.get_logger().info(f"Threshold: {self.confidence_threshold}")
+            # Intialize Yolo
+            self.model = YOLO(self.weigth_path)
 
-            self.model = YOLO(self.script_path)
+            # Implement params callback
+            self.add_on_set_parameters_callback(self.params_callback)
 
             self.yolov8_pub = self.create_lifecycle_publisher(Yolov8Inference, "inference", 1)
             self.img_pub = self.create_lifecycle_publisher(Image, "inferenceimg", 1)
@@ -50,6 +78,25 @@ class LifecycleCameraSubscriber(LifecycleNode):
         except Exception as e:
             self.get_logger().error(f"Error when configuring: {e}")
             return TransitionCallbackReturn.ERROR
+
+    def params_callback(self, params):
+        for p in params:
+            if p.name == "yolo_weight_path":
+                if not os.path.isfile(p.value):
+                    return SetParametersResult(
+                                successful=False,
+                                reason='The weight path received does not match a file'
+                            )
+                self.weigth_path = os.path.expanduser(p.value)
+                self.model = YOLO(self.weigth_path)
+                self.get_logger().info(f"Model weight changed to {os.path.basename(self.weigth_path)}")
+            elif p.name == "confidence_threshold":
+                self.confidence_threshold = p.value
+                self.get_logger().info(f"Threshold: {self.confidence_threshold}")
+        return SetParametersResult(
+            successful=True,
+            reason='All params setted'
+        )
 
     def on_activate(self, state: State) -> TransitionCallbackReturn:
         self.get_logger().info("Activating Yolo Node")
@@ -107,8 +154,6 @@ class LifecycleCameraSubscriber(LifecycleNode):
                 self.inference_result.right = int(b[3])
                 self.inference_result.confidence = float(box.conf)
                 self.yolov8_inference.yolov8_inference.append(self.inference_result)
-
-            #self.get_logger().info(f"{self.yolov8_inference}")
 
         annotated_frame = results[0].plot()
         img_msg = bridge.cv2_to_imgmsg(annotated_frame)
