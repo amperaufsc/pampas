@@ -29,6 +29,6 @@ services:
         - action: rebuild
           path: ./uv.lock
         - action: rebuild
-          path: ./docker/Dockerfile
+          path: ./.devcontainer/Dockerfile
         - action: rebuild
-          path: ./docker/entrypoint.sh
+          path: ./.devcontainer/entrypoint.sh
