@@ -1,0 +1,5 @@
+/perception/yolo_node:
+  ros__parameters:
+    confidence_threshold: 0.8
+    yolo_weights_path: 'config/yolo_weights/best.pt'  # Relative path from Pampas root dir
+    use_sim_time: false
