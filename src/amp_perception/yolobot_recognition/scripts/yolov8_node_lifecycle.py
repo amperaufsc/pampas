@@ -5,6 +5,7 @@ import rclpy
 from rclpy.lifecycle import LifecycleNode, State, TransitionCallbackReturn
 from rcl_interfaces.msg import ParameterDescriptor, FloatingPointRange, SetParametersResult
 import os
+from pathlib import Path
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 from yolov8_msgs.msg import InferenceWithConfidence
@@ -45,6 +46,14 @@ class LifecycleCameraSubscriber(LifecycleNode):
             )
         )
 
+        self.declare_parameter(
+            'root_dir',
+            'PAMPAS_ROOT_DIR',
+            descriptor=ParameterDescriptor(
+                description='Root environment variable used to resolve relative paths'
+            )
+        )
+
         self.get_logger().info("Yolo node initialized (Unconfigured)")
 
     def on_configure(self, state: State) -> TransitionCallbackReturn:
@@ -52,11 +61,12 @@ class LifecycleCameraSubscriber(LifecycleNode):
             self.get_logger().info("Configuring Yolo Node") 
 
             # Initialize parameters
-            self.weigth_path = os.path.expanduser(self.get_parameter('yolo_weights_path').value)
+            ROOT_DIR_ENV = self.get_parameter('root_dir').value
+            self.weigths_path = self.resolve_relative_path(self.get_parameter('yolo_weights_path').value, ROOT_DIR_ENV)
             self.confidence_threshold = self.get_parameter('confidence_threshold').value
 
             # Intialize Yolo
-            self.model = YOLO(self.weigth_path)
+            self.model = YOLO(self.weigths_path)
 
             # Implement params callback
             self.add_on_set_parameters_callback(self.params_callback)
@@ -74,25 +84,6 @@ class LifecycleCameraSubscriber(LifecycleNode):
         except Exception as e:
             self.get_logger().error(f"Error when configuring: {e}")
             return TransitionCallbackReturn.ERROR
-
-    def params_callback(self, params):
-        for p in params:
-            if p.name == "yolo_weights_path":
-                if not os.path.isfile(p.value):
-                    return SetParametersResult(
-                                successful=False,
-                                reason='The weight path received does not match a file'
-                            )
-                self.weigth_path = os.path.expanduser(p.value)
-                self.model = YOLO(self.weigth_path)
-                self.get_logger().info(f"Model weight changed to {os.path.basename(self.weigth_path)}")
-            elif p.name == "confidence_threshold":
-                self.confidence_threshold = p.value
-                self.get_logger().info(f"Threshold: {self.confidence_threshold}")
-        return SetParametersResult(
-            successful=True,
-            reason='All params setted'
-        )
 
     def on_activate(self, state: State) -> TransitionCallbackReturn:
         self.get_logger().info("Activating Yolo Node")
@@ -158,6 +149,78 @@ class LifecycleCameraSubscriber(LifecycleNode):
         self.yolov8_pub.publish(self.yolov8_inference)
         self.yolov8_inference.yolov8_inference.clear()
 
+    def params_callback(self, params):
+        for p in params:
+            if p.name == "yolo_weights_path":
+                try:
+                    path = self.resolve_relative_path(p.value, ROOT_DIR_ENV)
+
+                    # Intialize Yolo
+                    self.model = YOLO(path)
+                    
+                    self.weigths_path = path
+                    self.get_logger().info(f"Model weights changed to {self.weigths_path.name}")
+                    continue
+
+                except FileNotFoundError:
+                    return SetParametersResult(
+                            successful=False,
+                            reason='Model weights path received does not match a file'
+                    )
+                except RuntimeError:
+                    return SetParametersResult(
+                            successful=False,
+                            reason=f'The {ROOT_DIR_ENV} is not set'
+                    )
+                except ValueError: 
+                    return SetParametersResult(
+                            successful=False,
+                            reason=f'Model weights path is empty'
+                    )
+                except Exception as e:
+                    return SetParametersResult(
+                            successful=False,
+                            reason=f'Could not load model: {e}'
+                    )
+
+            elif p.name == "confidence_threshold":
+                self.confidence_threshold = p.value
+                self.get_logger().info(f"Threshold: {self.confidence_threshold}")
+
+        return SetParametersResult(
+            successful=True,
+            reason='All params setted'
+        )
+
+    def resolve_relative_path(self, path_ : str, root_env : str) -> Path:
+        """Resolve the path in argument by turning it into an absolute path based on an existing root environment variable.
+
+        Raises:
+            FileNotFoundError: If the path does not match a file.
+            RuntimeError: If the root environment variable is not set.
+        """
+
+        if not path_:
+            raise ValueError("Path argument is empty")
+        
+        path = Path(path_)
+        if path.is_absolute():
+            if not path.is_file():
+                raise FileNotFoundError(f"File not found: {path}")
+            return path
+
+        path = Path(os.path.expandvars(os.path.expanduser(path)))
+        if not path.is_absolute():
+            root = os.environ.get(root_env)
+            if not root:
+                raise RuntimeError(f"{root_env} is not set")
+            path = Path(root) / path
+
+        if not path.is_file():
+            raise FileNotFoundError(f"File not found: {path}")
+
+        return path
+        
 def main(args=None):
     rclpy.init(args=args)
 
