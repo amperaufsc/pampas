@@ -1,17 +1,12 @@
 #!/usr/bin/env python3
 import rclpy
-#---------------------
-#Lifecycle imports
 from rclpy.lifecycle import LifecycleNode
 from rclpy.lifecycle import LifecycleState
 from rclpy.lifecycle import TransitionCallbackReturn
-#---------------------
 from nav_msgs.msg import Odometry
 from nav_msgs.msg import Path
-from geometry_msgs.msg import Pose
 from geometry_msgs.msg import PoseStamped
 from std_msgs.msg import Float32
-from rclpy.duration import Duration
 import numpy as np
 from fs_msgs.msg import ControlCommand
 from lateral_control.kls_lateral_motion_controller import KLS_Lateral_Motion_Controller
@@ -19,24 +14,11 @@ from include.kls_lateral_motion_controller_gains import KLS_Lateral_Motion_Contr
 from include.vehicle_parameters import Vehicle_Parameters
 from include.vehicle_state import Vehicle_State
 from longitudinal_control.longitudinal_controller import Longitudinal_Controller
-from longitudinal_control.PID_controller import PIDController
-import yaml
-
-#---------------------
-# Debbug Messages:
-#   self.get_logger().info('Path Unconfigured. (o_o)')
-#   self.get_logger().info('Configuring PathNode... (o.o)')
-#   self.get_logger().info('Activating PathNode... (o‿o)')
-#   self.get_logger().info('Deactivating PathNode... (-‿-)')
-#   self.get_logger().info('Cleaning up PathNode...(x‿x)')
-#   self.get_logger().info('Shutting down PathNode... (x_x)')
-#---------------------
-
 
 class ControlNode(LifecycleNode):
     def __init__(self):
         super().__init__('control_node')
-        self.get_logger().info('Path Unconfigured. (o_o)')
+        self.get_logger().info('Control Unconfigured')
         self.subscription_path = None
         self.subscription_odom = None
         self.publisher_ = None
@@ -45,18 +27,10 @@ class ControlNode(LifecycleNode):
         self.eh_publisher_ = None
         self.ey_publisher_ = None
         self.path_publisher_ = None
-        self.timer = None
-
-    #---------------------
-    #Base lifecycle callback
-    # def on_activate(self, state: LifecycleState) -> TransitionCallbackReturn:
-    #     return TransitionCallbackReturn.SUCCESS #More common and simple
-    #     return super().on_activate(state) #Used in activate and deactivate because it's more sensitive
-    #---------------------
-    
+        self.timer = None   
 
     def on_configure(self, state: LifecycleState) -> TransitionCallbackReturn:
-        self.get_logger().info('Configuring PathNode... (o.o)')
+        self.get_logger().info('Configuring Control Node')
         self.subscription_path = self.create_subscription(Path, '/path_concatenated', self.path_callback, 10)
         self.subscription_odom = self.create_subscription(Odometry, 'odom', self.odom_callback, 10)
 
@@ -85,7 +59,6 @@ class ControlNode(LifecycleNode):
         kls_lateral_motion_controller_gains = KLS_Lateral_Motion_Controller_Gains(self.Key, self.Keh) #lateral error gain - orientation error gain
         self.control = KLS_Lateral_Motion_Controller(vehicle_parameters, kls_lateral_motion_controller_gains)
         self.longitudinal_controller = Longitudinal_Controller(self.Kp, self.Ki, self.Kd, self.T, self.speed)
-        #self.PID_Controller = PIDController(Kp, Ki, Kd, T)
         self.received_path= False
         self.received_odom = False
         self.closest_index = 0
@@ -94,7 +67,7 @@ class ControlNode(LifecycleNode):
     
 
     def on_activate(self, state: LifecycleState) -> TransitionCallbackReturn:
-        self.get_logger().info('Activating ControlNode... (o‿o)')
+        self.get_logger().info('Activating Control Node')
 
         self.publisher_ = self.create_lifecycle_publisher(ControlCommand, 'control', 10)
         self.speed_publisher_ = self.create_lifecycle_publisher(Float32, '/speed', 10)
@@ -109,7 +82,7 @@ class ControlNode(LifecycleNode):
 
 
     def on_deactivate(self, state: LifecycleState) -> TransitionCallbackReturn:
-        self.get_logger().info('Deactivating ControlNode... (-‿-)')
+        self.get_logger().info('Deactivating Control Node')
 
         if self.timer is not None:
             self.destroy_timer(self.timer)
@@ -120,7 +93,7 @@ class ControlNode(LifecycleNode):
 
 
     def on_cleanup(self, state: LifecycleState) -> TransitionCallbackReturn:
-        self.get_logger().info('Cleaning up ControlNode...(x‿x)')
+        self.get_logger().info('Cleaning up Control Node')
 
         self._destroy_subscriptions()
 
@@ -132,7 +105,7 @@ class ControlNode(LifecycleNode):
 
 
     def on_shutdown(self, state: LifecycleState) -> TransitionCallbackReturn:
-        self.get_logger().info('Shutting down ControlNode... (x_x)')
+        self.get_logger().info('Shutting down Control Node')
 
         if self.timer is not None:
             self.destroy_timer(self.timer)
@@ -158,8 +131,6 @@ class ControlNode(LifecycleNode):
         self.timestamp = np.array(self.timestamp)
 
         self.received_path = True
-        self.get_logger().info('Path')
-
 
     def odom_callback(self, msg):
         self.received_odom = True
@@ -182,9 +153,7 @@ class ControlNode(LifecycleNode):
 
     def timer_callback(self):
         if self.received_odom:                
-            #speed = ((self.body_linear_velocity_x)**2 + (self.body_linear_velocity_y)**2)**0.5
             speed = self.body_linear_velocity_x
-            #self.get_logger().info('Speed: "%f"' %speed)
             speed_msg = Float32()
             speed_msg.data = speed
 
