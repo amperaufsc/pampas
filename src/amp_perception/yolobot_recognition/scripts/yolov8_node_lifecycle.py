@@ -9,7 +9,6 @@ from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 from yolov8_msgs.msg import InferenceWithConfidence
 from yolov8_msgs.msg import Yolov8Inference
-import logging # Used to silence get_logger().info() from YOLO
 
 bridge = CvBridge()
 
@@ -23,9 +22,6 @@ class LifecycleCameraSubscriber(LifecycleNode):
         self.yolov8_pub = None
         self.img_pub = None
         self.model = None
-
-        # Disable get_logger().info() from YOLO
-        logging.getLogger('ultralytics').setLevel(logging.WARNING)
 
         # Declare parameters
         self.declare_parameter(
@@ -137,7 +133,7 @@ class LifecycleCameraSubscriber(LifecycleNode):
 
         img = bridge.imgmsg_to_cv2(data, "bgr8")
 
-        results = self.model(img, conf=confidence, device=0)
+        results = self.model(img, conf=confidence, verbose=False, device=0)
 
         self.yolov8_inference.header = data.header
 
