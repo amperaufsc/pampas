@@ -25,7 +25,7 @@ class LifecycleCameraSubscriber(LifecycleNode):
 
         # Declare parameters
         self.declare_parameter(
-            'yolo_weight_path',
+            'yolo_weights_path',
             'None',
             descriptor=ParameterDescriptor(
                 description='Yolo weight path used for cone detection'
@@ -52,7 +52,7 @@ class LifecycleCameraSubscriber(LifecycleNode):
             self.get_logger().info("Configuring Yolo Node") 
 
             # Initialize parameters
-            self.weigth_path = os.path.expanduser(self.get_parameter('yolo_weight_path').value)
+            self.weigth_path = os.path.expanduser(self.get_parameter('yolo_weights_path').value)
             self.confidence_threshold = self.get_parameter('confidence_threshold').value
 
             # Intialize Yolo
@@ -77,7 +77,7 @@ class LifecycleCameraSubscriber(LifecycleNode):
 
     def params_callback(self, params):
         for p in params:
-            if p.name == "yolo_weight_path":
+            if p.name == "yolo_weights_path":
                 if not os.path.isfile(p.value):
                     return SetParametersResult(
                                 successful=False,
