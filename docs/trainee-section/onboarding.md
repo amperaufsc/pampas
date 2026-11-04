@@ -251,7 +251,7 @@ The main problem ROS solves is managing the communication between different modu
 
 in order to lower the barrier of entrance (especially for engineers) in robotics development, ROS implements the communication middleware required for robots to work properly and abstracts away that complexity using a simple and friendly interface.
 
-Different modules of the system are represented by Nodes. Each Node can listen (subscribe) or share (publish) information about any number of arbritary topics, and through the messages that carry that information the Nodes can communicate with each other.
+Different modules of the system are represented by Nodes. Each Node can listen to (subscribe) or share (publish) information about any number of arbritary topics, and through the messages that carry that information the Nodes can communicate with each other.
 
 We recommend you reading through the official tutorial, as any ROS guide we attempt to create here will fall short of the completeness and didadics of ROS' own documentation:
 
