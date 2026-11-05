@@ -1,0 +1,21 @@
+{
+  "name": "pampas",
+  "image": "pampas:latest",
+  "workspaceFolder": "/pampas",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/pampas,type=bind",
+  "runArgs": [
+    "--privileged",
+    "-e", "WAYLAND_DISPLAY=${localEnv:WAYLAND_DISPLAY}",
+    "-e", "XDG_RUNTIME_DIR=/tmp/xdg-runtime",
+    "--device", "/dev/bus/usb"
+  ],
+  "mounts": [
+    "source=${localEnv:XDG_RUNTIME_DIR}/${localEnv:WAYLAND_DISPLAY},target=/tmp/xdg-runtime/${localEnv:WAYLAND_DISPLAY},type=bind",
+    "source=/dev/bus/usb,target=/dev/bus/usb,type=bind"
+  ],
+  "containerEnv": {
+    "GDK_BACKEND": "wayland",
+    "QT_QPA_PLATFORM": "wayland"
+  },
+  "postCreateCommand": "bash /entrypoint.sh || true"
+}
