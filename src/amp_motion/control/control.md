@@ -22,9 +22,9 @@ Before implementing the controller, we must first define its variables, followed
 
 | Variable | Meaning | Explanation |
 |---|---|---|
-| \(e_y\) | Vehicle lateral error |---|
-| \(e_\psi\) | Heading error |---|
-| \(v_x\) | Longitudinal velocity |---|
-| \(v_y\) | Lateral velocity |---|
-| \(\delta\) | Steering angle |---|
-| \(L\) | Vehicle wheelbase |---|
+| \(e_y\) | Vehicle lateral error | Difference between the vehicle's actual position and its intended position along the trajectory. |
+| \(e_\psi\) | Heading error | Difference between the vehicle's forward direction and the tangent to the intended trajectory at the vehicle's reference position. |
+| \(v_x\) | Longitudinal velocity | Vehicle velocity along its longitudinal axis. |
+| \(v_y\) | Lateral velocity | Vehicle velocity along its lateral axis. |
+| \(\delta\) | Steering angle | Steering angle commanded by the controller. |
+| \(L\) | Vehicle wheelbase | Distance between the front and rear axles. |
