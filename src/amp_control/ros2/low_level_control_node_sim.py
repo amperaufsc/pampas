@@ -1,10 +1,10 @@
-#!/usr/bin/env python3
 import rclpy
-from rclpy.node import Node
-from fs_msgs.msg import ControlCommand
-from signals.signal_control import SignalsController
-import can
+from hil.arduino import ArduinoHIL
 from longitudinal_control.PIDT_controller import PIDController
+from rclpy.node import Node
+
+from fs_msgs.msg import ControlCommand
+
 
 class LowLevelControlSim(Node):
     def __init__(self):
@@ -15,17 +15,19 @@ class LowLevelControlSim(Node):
         self.kd = 10
         self.k  = 1
         self.t  = 0.1
-        self.Tt = 10 
+        self.Tt = 10
         self.angle = 0.0
-        self.signals = SignalsController(15, 13, 18)
+
+        self.hardware_interface_layer = ArduinoHIL(15, 13, 18)
         self.angular_velocity = 0
+
         self.pid = PIDController(self.kp, self.ki, self.kd, self.t, self.Tt, 100.0,-100.0)
         self.get_logger().info("Funciona")
 
     def control_callback(self, control: ControlCommand):
         for _ in range(int(1 /self.t)):
             pwm = self.pid.update_signal(1, self.angle)
-            self.signals.steer(pwm)
+            self.hardware_interface_layer.steer(pwm)
             voltage = pwm * 0.05
             self.angular_velocity += voltage * self.k * self.t
             self.angle += self.angular_velocity
@@ -37,7 +39,7 @@ def main(args=None):
     try:
         rclpy.spin(low_level_control)
     except:
-        low_level_control.signals.shutdown()
+        low_level_control.hardware_interface_layer.shutdown()
     finally:
         low_level_control.destroy_node()
         rclpy.shutdown()

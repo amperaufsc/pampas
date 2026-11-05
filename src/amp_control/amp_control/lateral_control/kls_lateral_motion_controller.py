@@ -1,7 +1,8 @@
 import numpy as np
 
-from include.vehicle_parameters import Vehicle_Parameters
-from include.kls_lateral_motion_controller_gains import KLS_Lateral_Motion_Controller_Gains
+from .kls_lateral_motion_controller_gains import KLS_Lateral_Motion_Controller_Gains
+from .vehicle_parameters import Vehicle_Parameters
+
 
 class KLS_Lateral_Motion_Controller:
     def __init__(self, vehicle_parameters: Vehicle_Parameters, controller_gains: KLS_Lateral_Motion_Controller_Gains, look_ahead_horizon = 3):
@@ -23,9 +24,9 @@ class KLS_Lateral_Motion_Controller:
         yaw = vehicle_state.yaw
         py = reference_point_orientation[1]
         px = reference_point_orientation[0]
-        reference_orientation = np.arctan2(py,px) 
-        return np.arctan2(np.sin(reference_orientation - yaw), np.cos(reference_orientation - yaw))   
-    
+        reference_orientation = np.arctan2(py,px)
+        return np.arctan2(np.sin(reference_orientation - yaw), np.cos(reference_orientation - yaw))
+
     def get_krp(self, reference_trajectory, vehicle_state):
         points = reference_trajectory[:self.look_ahead_horizon]
         x = points[:,0]
@@ -56,7 +57,7 @@ class KLS_Lateral_Motion_Controller:
             steering_angle = self.steering_down_limit
         elif steering_angle > self.steering_up_limit:
             steering_angle = self.steering_up_limit
-            
+
         self.ey=ey
         self.eh=np.rad2deg(eh)
         return steering_angle/self.steering_up_limit

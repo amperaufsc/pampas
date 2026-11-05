@@ -10,9 +10,9 @@ from rclpy.duration import Duration
 import numpy as np
 from fs_msgs.msg import ControlCommand
 from lateral_control.kls_lateral_motion_controller import KLS_Lateral_Motion_Controller
-from include.kls_lateral_motion_controller_gains import KLS_Lateral_Motion_Controller_Gains
-from include.vehicle_parameters import Vehicle_Parameters
-from include.vehicle_state import Vehicle_State
+from lateral_controlkls_lateral_motion_controller_gains import KLS_Lateral_Motion_Controller_Gains
+from lateral_controlvehicle_parameters import Vehicle_Parameters
+from lateral_controlvehicle_state import Vehicle_State
 from longitudinal_control.longitudinal_controller import Longitudinal_Controller
 from longitudinal_control.PID_controller import PIDController
 import yaml
@@ -51,7 +51,7 @@ class ControlNode(Node):
         self.timer = self.create_timer(float(self.T), self.timer_callback)
         self.index = 0
         self.get_logger().info('Control started')
-        
+
         vehicle_parameters = Vehicle_Parameters(1, np.radians(35), np.radians(-35)) #axle_length - steering_up_limit - steering_down_limit
 
         kls_lateral_motion_controller_gains = KLS_Lateral_Motion_Controller_Gains(self.Key, self.Keh) #lateral error gain - orientation error gain
@@ -61,17 +61,17 @@ class ControlNode(Node):
         self.received_path= False
         self.received_odom = False
         self.closest_index = 0
-        
-        
+
+
     def path_callback(self, path_msg):
         self.path = []
         self.timestamp = []
         for poses in path_msg.poses:
             x = poses.pose.position.x
-            y = poses.pose.position.y 
+            y = poses.pose.position.y
             time_stamp = poses.header.stamp
             time_stamp_float = time_stamp.sec + time_stamp.nanosec * 1e-9
-            self.path.append([x, y]) 
+            self.path.append([x, y])
             self.timestamp.append([time_stamp_float])
         self.path = np.array(self.path)
         self.timestamp = np.array(self.timestamp)
@@ -86,21 +86,21 @@ class ControlNode(Node):
         car_position_y = msg.pose.pose.position.y
         self.odom_timestamp = msg.header.stamp
         self.odom_time_stamp_float = self.odom_timestamp.sec + self.odom_timestamp.nanosec * 1e-9
-        
+
         self.position = np.array([car_position_x, car_position_y])
 
         orientation_q = msg.pose.pose.orientation
         orientation_list = [orientation_q.x, orientation_q.y, orientation_q.z, orientation_q.w]
         yaw = np.arctan2(2*(orientation_q.w*orientation_q.z - orientation_q.x*orientation_q.y), 1 - 2*((orientation_q.y)**2 + (orientation_q.z)**2))
-        
+
         self.body_linear_velocity_x = msg.twist.twist.linear.x
         self.body_linear_velocity_y = msg.twist.twist.linear.y
-        
+
         self.vehicle_state = Vehicle_State(self.position[0], self.position[1], yaw, self.body_linear_velocity_x, self.body_linear_velocity_y, 0)
-    
+
 
     def timer_callback(self):
-        if self.received_odom:                
+        if self.received_odom:
             #speed = ((self.body_linear_velocity_x)**2 + (self.body_linear_velocity_y)**2)**0.5
             speed = self.body_linear_velocity_x
             #self.get_logger().info('Speed: "%f"' %speed)
@@ -140,7 +140,7 @@ class ControlNode(Node):
                 msg = ControlCommand()
                 msg.steering = steering_command
                 msg.throttle = throttle_command
-                msg.brake = brake_command 
+                msg.brake = brake_command
 
                 self.path_publishing(self.reference_path)
                 self.publisher_.publish(msg)
@@ -165,7 +165,7 @@ class ControlNode(Node):
             pose.pose.position.x = point[0]
             pose.pose.position.y = point[1]
             poses.append(pose)
-            
+
         path_msg.poses = poses
         self.path_publisher_.publish(path_msg)
 
