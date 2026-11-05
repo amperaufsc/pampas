@@ -1,0 +1,20 @@
+.git
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# ROS / colcon artifacts (already in the volume, not needed in the image build)
+install/
+build/
+log/
+
+# OS / editor
+.DS_Store
+*.swp
+
+# Docker
+.devcontainer/
+!.devcontainer/entrypoint.sh
+docker-compose.yml
