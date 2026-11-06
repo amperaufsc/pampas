@@ -1,67 +1,80 @@
 #!/usr/bin/env python3
-import rclpy
-from rclpy.node import Node
-from nav_msgs.msg import Odometry
-from nav_msgs.msg import Path
-from geometry_msgs.msg import Pose
-from geometry_msgs.msg import PoseStamped
-from std_msgs.msg import Float32
-from rclpy.duration import Duration
 import numpy as np
-from fs_msgs.msg import ControlCommand
+import rclpy
+import yaml
+from geometry_msgs.msg import Pose, PoseStamped
 from lateral_control.kls_lateral_motion_controller import KLS_Lateral_Motion_Controller
-from lateral_controlkls_lateral_motion_controller_gains import KLS_Lateral_Motion_Controller_Gains
+from lateral_controlkls_lateral_motion_controller_gains import (
+    KLS_Lateral_Motion_Controller_Gains,
+)
 from lateral_controlvehicle_parameters import Vehicle_Parameters
 from lateral_controlvehicle_state import Vehicle_State
 from longitudinal_control.longitudinal_controller import Longitudinal_Controller
 from longitudinal_control.PID_controller import PIDController
-import yaml
+from nav_msgs.msg import Odometry, Path
+from rclpy.duration import Duration
+from rclpy.node import Node
+from std_msgs.msg import Float32
+
+from fs_msgs.msg import ControlCommand
+
 
 class ControlNode(Node):
     def __init__(self):
-        super().__init__('control_node')
+        super().__init__("control_node")
 
-        self.subscription = self.create_subscription(Path, 'path', self.path_callback, 10)
-        self.subscription = self.create_subscription(Odometry, 'odom', self.odom_callback, 10)
+        self.subscription = self.create_subscription(
+            Path, "path", self.path_callback, 10
+        )
+        self.subscription = self.create_subscription(
+            Odometry, "odom", self.odom_callback, 10
+        )
 
-        self.publisher_ = self.create_publisher(ControlCommand, 'control', 10)
-        self.speed_publisher_ = self.create_publisher(Float32, '/speed', 10)
-        self.erro_ant_publisher_ = self.create_publisher(Float32, '/erro_ant', 10)
-        self.eh_publisher_ = self.create_publisher(Float32, '/eh', 10)
-        self.ey_publisher_ = self.create_publisher(Float32, '/ey', 10)
-        self.path_publisher_ = self.create_publisher(Path, 'reference_path', 10)
+        self.publisher_ = self.create_publisher(ControlCommand, "control", 10)
+        self.speed_publisher_ = self.create_publisher(Float32, "/speed", 10)
+        self.erro_ant_publisher_ = self.create_publisher(Float32, "/erro_ant", 10)
+        self.eh_publisher_ = self.create_publisher(Float32, "/eh", 10)
+        self.ey_publisher_ = self.create_publisher(Float32, "/ey", 10)
+        self.path_publisher_ = self.create_publisher(Path, "reference_path", 10)
 
         # difinição dos parametros que estão no arquivo yaml (control/config/control_parameters.yaml)
-        self.declare_parameter('Kp', 0.0)
-        self.declare_parameter('Ki', 0.0)
-        self.declare_parameter('Kd', 0.0)
-        self.declare_parameter('Key', 0.0)
-        self.declare_parameter('Keh', 0.0)
-        self.declare_parameter('speed', 0.0)
-        self.declare_parameter('sampling_period', 0.01)
+        self.declare_parameter("Kp", 0.0)
+        self.declare_parameter("Ki", 0.0)
+        self.declare_parameter("Kd", 0.0)
+        self.declare_parameter("Key", 0.0)
+        self.declare_parameter("Keh", 0.0)
+        self.declare_parameter("speed", 0.0)
+        self.declare_parameter("sampling_period", 0.01)
 
-        self.Kp = self.get_parameter('Kp').value
-        self.Ki = self.get_parameter('Ki').value
-        self.Kd = self.get_parameter('Kd').value
-        self.Key = self.get_parameter('Key').value
-        self.Keh = self.get_parameter('Keh').value
-        self.speed = self.get_parameter('speed').value
-        self.T = self.get_parameter('sampling_period').value
+        self.Kp = self.get_parameter("Kp").value
+        self.Ki = self.get_parameter("Ki").value
+        self.Kd = self.get_parameter("Kd").value
+        self.Key = self.get_parameter("Key").value
+        self.Keh = self.get_parameter("Keh").value
+        self.speed = self.get_parameter("speed").value
+        self.T = self.get_parameter("sampling_period").value
 
         self.timer = self.create_timer(float(self.T), self.timer_callback)
         self.index = 0
-        self.get_logger().info('Control started')
+        self.get_logger().info("Control started")
 
-        vehicle_parameters = Vehicle_Parameters(1, np.radians(35), np.radians(-35)) #axle_length - steering_up_limit - steering_down_limit
+        vehicle_parameters = Vehicle_Parameters(
+            1, np.radians(35), np.radians(-35)
+        )  # axle_length - steering_up_limit - steering_down_limit
 
-        kls_lateral_motion_controller_gains = KLS_Lateral_Motion_Controller_Gains(self.Key, self.Keh) #lateral error gain - orientation error gain
-        self.control = KLS_Lateral_Motion_Controller(vehicle_parameters, kls_lateral_motion_controller_gains)
-        self.longitudinal_controller = Longitudinal_Controller(self.Kp, self.Ki, self.Kd, self.T, self.speed)
-        #self.PID_Controller = PIDController(Kp, Ki, Kd, T)
-        self.received_path= False
+        kls_lateral_motion_controller_gains = KLS_Lateral_Motion_Controller_Gains(
+            self.Key, self.Keh
+        )  # lateral error gain - orientation error gain
+        self._lateral_controller = KLS_Lateral_Motion_Controller(
+            vehicle_parameters, kls_lateral_motion_controller_gains
+        )
+        self._longitudinal_controller = Longitudinal_Controller(
+            self.Kp, self.Ki, self.Kd, self.T, self.speed
+        )
+        # self.PID_Controller = PIDController(Kp, Ki, Kd, T)
+        self.received_path = False
         self.received_odom = False
         self.closest_index = 0
-
 
     def path_callback(self, path_msg):
         self.path = []
@@ -77,65 +90,94 @@ class ControlNode(Node):
         self.timestamp = np.array(self.timestamp)
 
         self.received_path = True
-        self.get_logger().info('Path')
-
+        self.get_logger().info("Path")
 
     def odom_callback(self, msg):
         self.received_odom = True
         car_position_x = msg.pose.pose.position.x
         car_position_y = msg.pose.pose.position.y
         self.odom_timestamp = msg.header.stamp
-        self.odom_time_stamp_float = self.odom_timestamp.sec + self.odom_timestamp.nanosec * 1e-9
+        self.odom_time_stamp_float = (
+            self.odom_timestamp.sec + self.odom_timestamp.nanosec * 1e-9
+        )
 
         self.position = np.array([car_position_x, car_position_y])
 
         orientation_q = msg.pose.pose.orientation
-        orientation_list = [orientation_q.x, orientation_q.y, orientation_q.z, orientation_q.w]
-        yaw = np.arctan2(2*(orientation_q.w*orientation_q.z - orientation_q.x*orientation_q.y), 1 - 2*((orientation_q.y)**2 + (orientation_q.z)**2))
+        orientation_list = [
+            orientation_q.x,
+            orientation_q.y,
+            orientation_q.z,
+            orientation_q.w,
+        ]
+        yaw = np.arctan2(
+            2 * (orientation_q.w * orientation_q.z - orientation_q.x * orientation_q.y),
+            1 - 2 * ((orientation_q.y) ** 2 + (orientation_q.z) ** 2),
+        )
 
         self.body_linear_velocity_x = msg.twist.twist.linear.x
         self.body_linear_velocity_y = msg.twist.twist.linear.y
 
-        self.vehicle_state = Vehicle_State(self.position[0], self.position[1], yaw, self.body_linear_velocity_x, self.body_linear_velocity_y, 0)
-
+        self.vehicle_state = Vehicle_State(
+            self.position[0],
+            self.position[1],
+            yaw,
+            self.body_linear_velocity_x,
+            self.body_linear_velocity_y,
+            0,
+        )
 
     def timer_callback(self):
         if self.received_odom:
-            #speed = ((self.body_linear_velocity_x)**2 + (self.body_linear_velocity_y)**2)**0.5
+            # speed = ((self.body_linear_velocity_x)**2 + (self.body_linear_velocity_y)**2)**0.5
             speed = self.body_linear_velocity_x
-            #self.get_logger().info('Speed: "%f"' %speed)
+            # self.get_logger().info('Speed: "%f"' %speed)
             speed_msg = Float32()
             speed_msg.data = speed
 
-            erro_ant = self.longitudinal_controller.erro
+            erro_ant = self._longitudinal_controller.erro
             erro_ant_msg = Float32()
             erro_ant_msg.data = erro_ant
 
-            eh = self.control.eh
+            eh = self._lateral_controller.eh
             eh_msg = Float32()
             eh_msg.data = eh
 
-            ey = self.control.ey
+            ey = self._lateral_controller.ey
             ey_msg = Float32()
             ey_msg.data = ey
 
             if self.received_path:
-                #Procurar apenas em uma janela (20) ao redor do último ponto conhecido.
-                start = max(0, self.closest_index - 20) # onde a janela se inicia, não pode ser menor que 0
-                end   = min(len(self.path), self.closest_index + 20) # onde a janela termina, não pode ser maior que o tamanho do path
-                segment = self.path[start:end] # pega apenas os pontos dentro dessa janela
-                distancias = np.linalg.norm(segment - self.position, axis=1) # calcula as distancias em relação ao carro
+                # Procurar apenas em uma janela (20) ao redor do último ponto conhecido.
+                start = max(
+                    0, self.closest_index - 20
+                )  # onde a janela se inicia, não pode ser menor que 0
+                end = min(
+                    len(self.path), self.closest_index + 20
+                )  # onde a janela termina, não pode ser maior que o tamanho do path
+                segment = self.path[
+                    start:end
+                ]  # pega apenas os pontos dentro dessa janela
+                distancias = np.linalg.norm(
+                    segment - self.position, axis=1
+                )  # calcula as distancias em relação ao carro
 
-                self.closest_index = start + np.argmin(distancias) # o indice mais próximo dentro da janela e transforma em indice global
+                self.closest_index = (
+                    start + np.argmin(distancias)
+                )  # o indice mais próximo dentro da janela e transforma em indice global
 
-                self.reference_path = self.path[self.closest_index:]
+                self.reference_path = self.path[self.closest_index :]
 
-                steering_command = - self.control.update_steering_angle_control_signal(self.reference_path, self.vehicle_state)
-                throttle_command, brake_command = self.longitudinal_controller.update_torque_control_signal(self.path, self.vehicle_state)
-
-                self.get_logger().debug('Throttle: "%f"' %throttle_command)
-                self.get_logger().debug('Steering: "%f"' %steering_command)
-                self.get_logger().debug('Throttle: "%f"' %throttle_command)
+                steering_command = -self._lateral_controller.update_steering_angle_control_signal(
+                    self.reference_path, self.vehicle_state
+                )
+                throttle_command, brake_command = (
+                    self._longitudinal_controller.update_torque_control_signal(
+                        self.path, self.vehicle_state
+                    )
+                )
+                self.get_logger().debug(f"Throttle: {throttle_command}")
+                self.get_logger().debug(f"Steering: {steering_command}")
 
                 msg = ControlCommand()
                 msg.steering = steering_command
@@ -152,7 +194,6 @@ class ControlNode(Node):
                 self.get_logger().warn("Path not received")
         else:
             self.get_logger().warn("Odom not received")
-
 
     def path_publishing(self, np_array_path):
         path_msg = Path()
@@ -178,5 +219,5 @@ def main(args=None):
     rclpy.shutdown()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
