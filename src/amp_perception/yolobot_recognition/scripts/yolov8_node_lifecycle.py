@@ -4,12 +4,11 @@ from ultralytics import YOLO
 import rclpy
 from rclpy.lifecycle import LifecycleNode, State, TransitionCallbackReturn
 from rcl_interfaces.msg import ParameterDescriptor, FloatingPointRange, SetParametersResult
-import os
-from pathlib import Path
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 from yolov8_msgs.msg import InferenceWithConfidence
 from yolov8_msgs.msg import Yolov8Inference
+from amp_utils.definitions import get_file_path_from_root
 
 bridge = CvBridge()
 
@@ -46,14 +45,6 @@ class LifecycleCameraSubscriber(LifecycleNode):
             )
         )
 
-        self.declare_parameter(
-            'root_dir',
-            'PAMPAS_ROOT_DIR',
-            descriptor=ParameterDescriptor(
-                description='Root environment variable used to resolve relative paths'
-            )
-        )
-
         self.get_logger().info("Yolo node initialized (Unconfigured)")
 
     def on_configure(self, state: State) -> TransitionCallbackReturn:
@@ -61,8 +52,8 @@ class LifecycleCameraSubscriber(LifecycleNode):
             self.get_logger().info("Configuring Yolo Node") 
 
             # Initialize parameters
-            ROOT_DIR_ENV = self.get_parameter('root_dir').value
-            self.weigths_path = self.resolve_relative_path(self.get_parameter('yolo_weights_path').value, ROOT_DIR_ENV)
+            self.weigths_path = get_file_path_from_root(self.get_parameter('yolo_weights_path').value)
+            
             self.confidence_threshold = self.get_parameter('confidence_threshold').value
 
             # Intialize Yolo
@@ -153,8 +144,7 @@ class LifecycleCameraSubscriber(LifecycleNode):
         for p in params:
             if p.name == "yolo_weights_path":
                 try:
-                    path = self.resolve_relative_path(p.value, ROOT_DIR_ENV)
-
+                    path = get_file_path_from_root(p.value)
                     # Intialize Yolo
                     self.model = YOLO(path)
                     
@@ -166,11 +156,6 @@ class LifecycleCameraSubscriber(LifecycleNode):
                     return SetParametersResult(
                             successful=False,
                             reason='Model weights path received does not match a file'
-                    )
-                except RuntimeError:
-                    return SetParametersResult(
-                            successful=False,
-                            reason=f'The {ROOT_DIR_ENV} is not set'
                     )
                 except ValueError: 
                     return SetParametersResult(
@@ -191,35 +176,6 @@ class LifecycleCameraSubscriber(LifecycleNode):
             successful=True,
             reason='All params setted'
         )
-
-    def resolve_relative_path(self, path_ : str, root_env : str) -> Path:
-        """Resolve the path in argument by turning it into an absolute path based on an existing root environment variable.
-
-        Raises:
-            FileNotFoundError: If the path does not match a file.
-            RuntimeError: If the root environment variable is not set.
-        """
-
-        if not path_:
-            raise ValueError("Path argument is empty")
-        
-        path = Path(path_)
-        if path.is_absolute():
-            if not path.is_file():
-                raise FileNotFoundError(f"File not found: {path}")
-            return path
-
-        path = Path(os.path.expandvars(os.path.expanduser(path)))
-        if not path.is_absolute():
-            root = os.environ.get(root_env)
-            if not root:
-                raise RuntimeError(f"{root_env} is not set")
-            path = Path(root) / path
-
-        if not path.is_file():
-            raise FileNotFoundError(f"File not found: {path}")
-
-        return path
         
 def main(args=None):
     rclpy.init(args=args)

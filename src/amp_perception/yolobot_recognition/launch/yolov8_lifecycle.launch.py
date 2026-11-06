@@ -7,8 +7,7 @@ def generate_launch_description():
 
     return LaunchDescription([
         LaunchArg('pampas_params_path', default_value=['pampas_params_path'], description='Path of Pampas yaml parameters file'), 
-        LaunchArg('root_dir', default_value=['PAMPAS_ROOT_DIR'], description='Root environment variable used to resolve relative paths'), 
-        LaunchArg('namespace', default_value=['perception'], description='Namespace for node'),
+        LaunchArg('namespace', default_value=[''], description='Namespace for node'),
         LaunchArg('image',default_value=['/oak/left/image_raw'],description='img topic'),
         LaunchArg('inference',default_value=['inference'],description='bounding box coordenates on image'),
         LaunchArg('inferenceimg',default_value=['inferenceimg'],description='img with boundingbox'),
@@ -24,8 +23,7 @@ def generate_launch_description():
                 ('inferenceimg',LaunchConfiguration('inferenceimg'))
                 ],
             parameters=[
-                LaunchConfiguration('pampas_params_path'),
-                {'root_dir' : LaunchConfiguration('root_dir')}
+                LaunchConfiguration('pampas_params_path')
             ]
     )
     ])
