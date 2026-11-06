@@ -3,10 +3,11 @@ build/
 install/
 log/
 run/
-config/yolo_scripts/
+config/yolo_weights/*.pt
 
 # Workspace
 .vscode/
+**/__pycache__/
 
 # MkDocs build
 site/
