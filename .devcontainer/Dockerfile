@@ -1,5 +1,7 @@
 # syntax=docker/dockerfile:1
 
+# TODO: Turn the ROS version into an ARG
+
 # ---------- Stage 1: package.xml manifests only ----------
 # Lets the rosdep layer cache until a package.xml actually changes.
 FROM ros:humble AS manifests
@@ -78,7 +80,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     apt-get update && rosdep update \
     && rosdep install -y --ignore-src --from-paths \
        $(colcon list --base-paths /tmp/src --paths-only --packages-up-to \
-         perception control mapper path_planning amp_utils amp_sm \
+         perception amp_control mapper path_planning amp_utils amp_sm \
          depthai_ros_driver amp_bringup yolobot_recognition orbslam3_ros2) \
     && rm -rf /tmp/src
 
@@ -89,6 +91,9 @@ source /opt/ros/humble/setup.bash
 alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 EOF
+
+RUN /opt/venv/bin/python -m ipykernel install --prefix /usr/local \
+    --name pampas --display-name "Python (pampas)"
 
 COPY .devcontainer/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
