@@ -8,7 +8,7 @@ from amp_control.hardware_interface import (
 )
 
 
-class ArduinoController(HardwareInterface):
+class ArduinoInterface(HardwareInterface):
     """Hardware integration layer for Arduino."""
 
     def __init__(

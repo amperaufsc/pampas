@@ -2,7 +2,7 @@
 
 from enum import Enum
 
-from .arduino.arduino_interface import ArduinoController as ArduinoController
+from .arduino.arduino_interface import ArduinoInterface as ArduinoInterface
 from .hardware_interface import HardwareInterface as HardwareInterface
 from .hardware_interface import SteeringLimits, ThrottleLimits
 from .jetson.jetson_interface import JetsonController as JetsonController
@@ -24,8 +24,8 @@ def hardware_controller_factory(
 ) -> HardwareInterface:
     match interface:
         case HardwareInterfaceOption.ARDUINO:
-            return ArduinoController(throttle_limits, steering_limits, *args, **kwargs)
+            return ArduinoInterface(throttle_limits, steering_limits, *args, **kwargs)
         case HardwareInterfaceOption.JETSON:
             return JetsonController(throttle_limits, steering_limits, *args, **kwargs)
         case _:
-            return ArduinoController(throttle_limits, steering_limits, *args, **kwargs)
+            return ArduinoInterface(throttle_limits, steering_limits, *args, **kwargs)
