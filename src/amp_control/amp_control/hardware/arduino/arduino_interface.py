@@ -1,7 +1,7 @@
 import time
 
 import serial
-from amp_control.hardware_interface import (
+from amp_control.hardware.hardware_interface import (
     HardwareInterface,
     SteeringLimits,
     ThrottleLimits,

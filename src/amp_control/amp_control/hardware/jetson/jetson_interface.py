@@ -1,13 +1,13 @@
-import Jetson.GPIO
-from amp_control.hardware_control import (
-    HardwareController,
+# import Jetson.GPIO
+from amp_control.hardware.hardware_interface import (
+    HardwareInterface,
     SteeringLimits,
     ThrottleLimits,
 )
 
 
 # TODO: Implement this according to the HardwareController interface
-class JetsonController(HardwareController):
+class JetsonController(HardwareInterface):
     """Hardware integration layer for Nvidia's Jetson."""
 
     def __init__(
