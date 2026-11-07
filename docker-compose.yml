@@ -17,9 +17,16 @@ services:
       - ROS_DOMAIN_ID=67
       - TERM=${TERM:-xterm-256color}
       - COLORTERM=truecolor
+      - PYTHONPATH=/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages:/opt/venv/lib/python3.10/site-packages/
 
     volumes:
       - .:/pampas
+      - type: tmpfs
+        target: /pampas/src/ORB_SLAM3
+      - type: tmpfs
+        target: /pampas/src/Pangolin
+      - type: tmpfs
+        target: /pampas/.git/modules/
 
     develop:
       watch:

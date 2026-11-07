@@ -1,17 +1,19 @@
 {
   "name": "pampas",
-  "image": "pampas:latest",
+  "dockerComposeFile": ["../docker-compose.yml", "compose.wayland.yml"],
+  "service": "pampas",
   "workspaceFolder": "/pampas",
   "workspaceMount": "source=${localWorkspaceFolder},target=/pampas,type=bind",
   "runArgs": [
     "--privileged",
     "-e", "WAYLAND_DISPLAY=${localEnv:WAYLAND_DISPLAY}",
     "-e", "XDG_RUNTIME_DIR=/tmp/xdg-runtime",
-    "--device", "/dev/bus/usb"
+    "--device", "/dev/bus/usb",
+    "--tmpfs", "/pampas/src/ORB_SLAM3"
   ],
   "mounts": [
     "source=${localEnv:XDG_RUNTIME_DIR}/${localEnv:WAYLAND_DISPLAY},target=/tmp/xdg-runtime/${localEnv:WAYLAND_DISPLAY},type=bind",
-    "source=/dev/bus/usb,target=/dev/bus/usb,type=bind"
+    "source=/dev/bus/usb,target=/dev/bus/usb,type=bind",
   ],
   "containerEnv": {
     "GDK_BACKEND": "wayland",
