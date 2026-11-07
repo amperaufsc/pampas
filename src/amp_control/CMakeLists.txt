@@ -8,7 +8,9 @@ endif()
 find_package(ament_cmake REQUIRED)
 find_package(ament_cmake_python REQUIRED)
 
-ament_python_install_package(amp_control)
+# The argument to ament_python_install_package() is the name of the directory
+# alongside the CMakeLists.txt that contains the Python file.
+ament_python_install_package(${PROJECT_NAME})
 
 install(PROGRAMS
   ros2/control_node.py
