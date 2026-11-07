@@ -3,14 +3,12 @@
 from typing import cast
 
 import rclpy
-from amp_control.hardware_control import (
-    HardwareController,
+from amp_control.hardware import (
     HardwareInterface,
-    hardware_controller_factory,
-)
-from amp_control.hardware_control.hardware_controller import (
+    HardwareInterfaceOption,
     SteeringLimits,
     ThrottleLimits,
+    hardware_controller_factory,
 )
 from rclpy.node import Node, ParameterDescriptor
 from simple_pid import PID
@@ -30,8 +28,8 @@ class LowLevelControl(Node):
                 ("ki", 0.0, ParameterDescriptor()),
                 ("kd", 0.0, ParameterDescriptor()),
                 ("setpoint", 0.0, ParameterDescriptor()),
-                ("left_position_limit", 90.0, ParameterDescriptor()),
-                ("right_position_limit", -90.0, ParameterDescriptor()),
+                ("left_position_limit", -90.0, ParameterDescriptor()),
+                ("right_position_limit", 90.0, ParameterDescriptor()),
             ],
         )
 
@@ -66,8 +64,8 @@ class LowLevelControl(Node):
             sample_time=0.0,  # The time is controlled by the node timer
         )
 
-        self._hardware_controller: HardwareController = hardware_controller_factory(
-            HardwareInterface.ARDUINO,
+        self._hardware_controller: HardwareInterface = hardware_controller_factory(
+            HardwareInterfaceOption.ARDUINO,
             ThrottleLimits(min=0.0, max=1.0),
             SteeringLimits(min=-1.0, max=1.0),
         )
