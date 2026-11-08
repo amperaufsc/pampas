@@ -31,7 +31,7 @@ class AnalogPositionSensor(PositionSensor):
             value = (raw - self._center) / (self._max - self._center)
         else:
             value = (raw - self._center) / (self._center - self._min)
-        return float(min(self._max, max(value, self._min)))
+        return float(min(1.0, max(value, -1.0)))
 
 
 # class CanPositionSensor(PositionSensor):
