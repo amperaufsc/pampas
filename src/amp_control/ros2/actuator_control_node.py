@@ -8,69 +8,51 @@ from amp_control.hardware.board import MockBoard
 from amp_control.hardware.sensor import AnalogPositionSensor
 from rclpy.node import Node, ParameterDescriptor
 from simple_pid import PID
-from std_msgs import msg as std_msg
 
+from amp_msgs import msg as amp_msgs
 from fs_msgs import msg as fs_msg
 
 
 class ActuatorControlNode(Node):
     def __init__(self):
         super().__init__("acutator_control")
+        self.get_logger().info("Starting node...")
 
+        # Must come before any call of self.get_parameter
         self._declare_parameters()
 
         queue_size: int = 10
-        self._create_publishers(queue_size)
-        self._create_subscribers(queue_size)
+        self._motion_control_sub = self.create_subscription(
+            fs_msg.ControlCommand, "/control", self.update_setpoint_callback, queue_size
+        )
+        self._debug_pub = self.create_publisher(
+            amp_msgs.SteeringActuatorControlDebug,
+            "/debug/steering_actuator/control",
+            queue_size,
+        )
 
         self._steering_actuator = self._build_steering_actuator()
         self._steering_setpoint = cast(
             float, self.get_parameter("steering_actuator_controller.setpoint").value
         )
 
-    @property
-    def steering_actuator(self) -> SteeringActuator:
-        return self._steering_actuator
+        self.actuation_timer = self.create_timer(
+            1.0 / cast(int, self.get_parameter("update_rate_hz").value),
+            self.timer_callback,
+        )
+
+        self.get_logger().info("Node started")
 
     def update_setpoint_callback(self, setpoint: fs_msg.ControlCommand):
         self._steering_setpoint = setpoint.steering
 
     def timer_callback(self):
         debug_info = self._steering_actuator.update(self._steering_setpoint)
-        print(debug_info)
+        self._publish_debug(debug_info)
 
-        # Debugging information
-        self._steering_sensor_pub.publish(
-            std_msg.Float32(data=debug_info.sensor_position)
-        )
-        self._controller_output_pub.publish(
-            std_msg.Float32(data=debug_info.motor_command)
-        )
-        self._controller_error_pub.publish(
-            std_msg.Float32(data=debug_info.controller_error)
-        )
-
-
-    def _create_subscribers(self, queue_size: int) -> None:
-        self._motion_control_sub = self.create_subscription(
-            fs_msg.ControlCommand, "/control", self.update_setpoint_callback, queue_size
-        )
-
-    def _create_publishers(self, queue_size: int) -> None:
-        self._steering_sensor_pub = self.create_publisher(
-            std_msg.Float32, "~/debug/steering_sensor", queue_size
-        )
-        self._controller_output_pub = self.create_publisher(
-            std_msg.Float32, "~/debug/controller_output", queue_size
-        )
-        self._controller_error_pub = self.create_publisher(
-            std_msg.Float32, "~/debug/controller_error", queue_size
-        )
-
-        self.actuation_timer = self.create_timer(
-            1.0 / cast(int, self.get_parameter("update_rate_hz").value),
-            self.timer_callback,
-        )
+    @property
+    def steering_actuator(self) -> SteeringActuator:
+        return self._steering_actuator
 
     def _declare_parameters(self) -> None:
         self.declare_parameter("update_rate_hz", 100, ParameterDescriptor())
@@ -80,9 +62,9 @@ class ActuatorControlNode(Node):
         self.declare_parameters(
             namespace="steering_actuator_controller",
             parameters=[
-                ("kp", 0.0, ParameterDescriptor()),
-                ("ki", 0.0, ParameterDescriptor()),
-                ("kd", 0.0, ParameterDescriptor()),
+                ("kp", 1.0, ParameterDescriptor()),
+                ("ki", 1.0, ParameterDescriptor()),
+                ("kd", 1.0, ParameterDescriptor()),
                 ("setpoint", 0.0, ParameterDescriptor()),
                 ("left_command_limit", -255.0, ParameterDescriptor()),
                 ("right_command_limit", 255.0, ParameterDescriptor()),
@@ -140,6 +122,14 @@ class ActuatorControlNode(Node):
         return DCMotorSteeringActuator(
             board=board, controller=controller, position_sensor=position_sensor
         )
+
+    def _publish_debug(self, debug_info: SteeringActuator.DebugInfo):
+        msg = amp_msgs.SteeringActuatorControlDebug()
+        msg.header.stamp = self.get_clock().now().to_msg()
+        msg.sensor_position = debug_info.sensor_position
+        msg.motor_command = debug_info.motor_command
+        msg.controller_error = debug_info.controller_error
+        self._debug_pub.publish(msg)
 
 
 def main():

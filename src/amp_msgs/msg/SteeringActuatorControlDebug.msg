@@ -1,0 +1,4 @@
+std_msgs/Header header
+float32 sensor_position
+float32 motor_command
+float32 controller_error
