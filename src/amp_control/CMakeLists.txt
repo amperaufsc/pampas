@@ -13,10 +13,10 @@ find_package(ament_cmake_python REQUIRED)
 ament_python_install_package(${PROJECT_NAME})
 
 install(PROGRAMS
-  ros2/control_node.py
-  ros2/control_node_life.py
-  ros2/low_level_control_node.py
-  ros2/low_level_control_node_sim.py
+  ros2/motion_control_node.py
+  ros2/motion_control_node_life.py
+  ros2/actuator_control_node.py
+  ros2/actuator_control_node_sim.py
   ros2/ros_can_publisher.py
   DESTINATION lib/${PROJECT_NAME}
 )

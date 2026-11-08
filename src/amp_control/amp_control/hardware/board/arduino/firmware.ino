@@ -14,12 +14,12 @@ const uint8_t LIMIT_TRIGGERED = LOW;
 const unsigned long LIMIT_RELEASE_DEBOUNCE_MS = 10;  // triggers instantly, releases after 10 ms stable
 
 // ---- Settings ----
-const float MAX_DUTY = 90.0; // same cap as the PD saturation on the laptop
-const unsigned long TIMEOUT_MS = 100 // no steering for this long -> stop
+const float MAX_DUTY = 230; // to avoid damaging the motor
+const unsigned long TIMEOUT_MS = 100; // no command for this long -> stop
 const unsigned long TELEMETRY_PERIOD_MS = 10; // 100 Hz
 
-float steeringReference = 0.0;
-unsigned long lastSteeringMs = 0;
+float motorCommand = 0.0;
+unsigned long lastCommandMs = 0;
 unsigned long lastTelemetryMs = 0;
 char buf[24];
 uint8_t len = 0;
@@ -44,12 +44,11 @@ bool readLimit(Limit &limit, unsigned long now) {
   return limit.state;
 }
 
-void steer(float reference) {
-  reference = constrain(reference, -MAX_DUTY, MAX_DUTY);
-  digitalWrite(LEFT_PIN,  reference >= 0);
-  digitalWrite(RIGHT_PIN, reference <  0);
- // 0-100 % -> 0-255
- analogWrite(PWM_PIN, (uint8_t)(fabs(reference) * 2.55 + 0.5));
+void drive(int duty) {
+  duty = constrain(duty, -MAX_DUTY, MAX_DUTY);
+  digitalWrite(LEFT_PIN,  duty >= 0);
+  digitalWrite(RIGHT_PIN, duty <  0);
+  analogWrite(PWM_PIN, (uint8_t)(duty);
 }
 
 // Non-blocking line parser (readStringUntil would block up to 1 s).
@@ -59,8 +58,8 @@ void readSerial() {
     if (ch == '\n') {
       buf[len] = '\0';
       if (len > 2 && buf[0] == 'S' && buf[1] == ',') {
-        steeringReference = atof(buf + 2);
-        lastSteeringMs = millis();
+        motorCommand = atoi(buf + 2);
+        lastCommandMs = millis();
       }
       len = 0;
     } else if (len < sizeof(buf) - 1) {
@@ -78,7 +77,7 @@ void setup() {
   pinMode(RIGHT_PIN, OUTPUT);
   pinMode(LIMIT_LEFT_PIN, INPUT_PULLUP);
   pinMode(LIMIT_RIGHT_PIN, INPUT_PULLUP);
-  steer(0);
+  drive(0);
 }
 
 void loop() {
@@ -86,8 +85,8 @@ void loop() {
   unsigned long now = millis();
 
   // Watchdog: laptop silent -> stop.
-  steeringReference = (
-      (now - lastSteeringMs > TIMEOUT_MS) ? 0.0 : steeringReference
+  motorCommand = (
+      (now - lastCommandMs > TIMEOUT_MS) ? 0.0 : motorCommand
   );
 
   // Limit switches: block motion further into a triggered end stop,
@@ -95,10 +94,10 @@ void loop() {
   // laptop.
   bool left = readLimit(leftLimit, now);
   bool right = readLimit(rightLimit, now);
-  if (left && steeringReference > 0) steeringReference = 0;
-  if (right && steeringReference < 0) steeringReference = 0;
+  if (left && motorCommand > 0) motorCommand = 0;
+  if (right && motorCommand < 0) motorCommand = 0;
 
-  steer(steeringReference);
+  drive(motorCommand);
 
   if (now - lastTelemetryMs >= TELEMETRY_PERIOD_MS) {
     lastTelemetryMs = now;
