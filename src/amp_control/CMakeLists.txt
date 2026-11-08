@@ -18,6 +18,7 @@ install(PROGRAMS
   ros2/actuator_control_node.py
   ros2/actuator_control_node_sim.py
   ros2/ros_can_publisher.py
+  ros2/mouse_control_node.py
   DESTINATION lib/${PROJECT_NAME}
 )
 
