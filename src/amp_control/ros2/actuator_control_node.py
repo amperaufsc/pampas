@@ -47,7 +47,15 @@ class ActuatorControlNode(Node):
         self._steering_setpoint = setpoint.steering
 
     def timer_callback(self):
-        debug_info = self._steering_actuator.update(self._steering_setpoint)
+        controller_tunings = (
+            cast(float, self.get_parameter("steering_actuator_controller.kp").value),
+            cast(float, self.get_parameter("steering_actuator_controller.ki").value),
+            cast(float, self.get_parameter("steering_actuator_controller.kd").value),
+        )
+        debug_info = self._steering_actuator.update(
+            self._steering_setpoint,
+            controller_tunings=controller_tunings
+        )
         self._publish_debug(debug_info)
 
     @property
@@ -62,9 +70,9 @@ class ActuatorControlNode(Node):
         self.declare_parameters(
             namespace="steering_actuator_controller",
             parameters=[
-                ("kp", 1.0, ParameterDescriptor()),
-                ("ki", 1.0, ParameterDescriptor()),
-                ("kd", 1.0, ParameterDescriptor()),
+                ("kp", 100.0, ParameterDescriptor()),
+                ("ki", 0.0, ParameterDescriptor()),
+                ("kd", 0.0, ParameterDescriptor()),
                 ("setpoint", 0.0, ParameterDescriptor()),
                 ("left_command_limit", -255.0, ParameterDescriptor()),
                 ("right_command_limit", 255.0, ParameterDescriptor()),
@@ -82,12 +90,6 @@ class ActuatorControlNode(Node):
 
     def _build_steering_actuator(self) -> SteeringActuator:
         board = MockBoard()
-        position_sensor = AnalogPositionSensor(
-            board,
-            cast(int, self.get_parameter("position_sensor.min").value),
-            cast(int, self.get_parameter("position_sensor.center").value),
-            cast(int, self.get_parameter("position_sensor.max").value),
-        )
         controller = PID(
             Kp=float(
                 cast(float, self.get_parameter("steering_actuator_controller.kp").value)
@@ -118,9 +120,15 @@ class ActuatorControlNode(Node):
             ),
             sample_time=0.0,  # The time is controlled by the node timer
         )
+        position_sensor = AnalogPositionSensor(
+            board,
+            cast(int, self.get_parameter("position_sensor.min").value),
+            cast(int, self.get_parameter("position_sensor.center").value),
+            cast(int, self.get_parameter("position_sensor.max").value),
+        )
 
         return DCMotorSteeringActuator(
-            board=board, controller=controller, position_sensor=position_sensor
+            board=board, sensor=position_sensor, controller=controller
         )
 
     def _publish_debug(self, debug_info: SteeringActuator.DebugInfo):
