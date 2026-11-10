@@ -14,6 +14,7 @@ from include.kls_lateral_motion_controller_gains import KLS_Lateral_Motion_Contr
 from include.vehicle_parameters import Vehicle_Parameters
 from include.vehicle_state import Vehicle_State
 from longitudinal_control.longitudinal_controller import Longitudinal_Controller
+from rcl_interfaces.msg import FloatingPointRange, ParameterDescriptor, SetParametersResult
 
 class ControlNode(LifecycleNode):
     def __init__(self):
@@ -29,20 +30,72 @@ class ControlNode(LifecycleNode):
         self.path_publisher_ = None
         self.timer = None   
 
+        # Parameters declaration
+        self.declare_parameter(
+            'Kp',
+            0.05,
+            ParameterDescriptor(
+                description='Proportional gain for the controller',
+                floating_point_range=[FloatingPointRange(from_value=0.0, to_value=10.0, step=0.001)]
+            )
+        )
+
+        self.declare_parameter(
+            'Ki',
+            0.01,
+            ParameterDescriptor(
+                description='Integral gain for the controller',
+                floating_point_range=[FloatingPointRange(from_value=0.0, to_value=10.0, step=0.001)]
+            )
+        )
+
+        self.declare_parameter(
+            'Kd',
+            0.0,
+            ParameterDescriptor(
+                description='Derivative gain for the controller',
+                floating_point_range=[FloatingPointRange(from_value=0.0, to_value=10.0, step=0.001)]
+            )
+        )
+
+        self.declare_parameter(
+            'Key',
+            1.7,
+            ParameterDescriptor(
+                description='Gain for the cross-track error (y-axis)',
+                floating_point_range=[FloatingPointRange(from_value=0.0, to_value=10.0, step=0.01)]
+            )
+        )
+
+        self.declare_parameter(
+            'Keh',
+            1.5,
+            ParameterDescriptor(
+                description='Gain for the heading error',
+                floating_point_range=[FloatingPointRange(from_value=0.0, to_value=10.0, step=0.01)]
+            )
+        )
+
+        self.declare_parameter(
+            'speed',
+            1.0,
+            ParameterDescriptor(
+                description='Target linear speed',
+                floating_point_range=[FloatingPointRange(from_value=0.0, to_value=5.0, step=0.1)]
+            )
+        )
+
+        self.declare_parameter(
+            'sampling_period',
+            0.01,
+            ParameterDescriptor(
+                description='Sampling period for the control loop in seconds',
+                floating_point_range=[FloatingPointRange(from_value=0.001, to_value=1.0, step=0.001)]
+            )
+        )
+
     def on_configure(self, state: LifecycleState) -> TransitionCallbackReturn:
         self.get_logger().info('Configuring Control Node')
-        self.subscription_path = self.create_subscription(Path, '/path_concatenated', self.path_callback, 10)
-        self.subscription_odom = self.create_subscription(Odometry, 'odom', self.odom_callback, 10)
-
-        # difinição dos parametros que estão no arquivo yaml (control/config/control_parameters.yaml)
-        self.declare_parameter('Kp', 0.05)
-        self.declare_parameter('Ki', 0.01)
-        self.declare_parameter('Kd', 0.0)
-        self.declare_parameter('Key', 1.7)
-        self.declare_parameter('Keh', 1.5)
-        self.declare_parameter('speed', 1.0)
-        self.declare_parameter('sampling_period', 0.01)
-
 
         self.Kp = self.get_parameter('Kp').value
         self.Ki = self.get_parameter('Ki').value
@@ -51,6 +104,8 @@ class ControlNode(LifecycleNode):
         self.Keh = self.get_parameter('Keh').value
         self.speed = self.get_parameter('speed').value
         self.T = self.get_parameter('sampling_period').value
+
+        self.add_on_set_parameters_callback(self.params_callback)
 
         self.index = 0
 
@@ -62,6 +117,9 @@ class ControlNode(LifecycleNode):
         self.received_path= False
         self.received_odom = False
         self.closest_index = 0
+
+        self.subscription_path = self.create_subscription(Path, '/path_concatenated', self.path_callback, 10)
+        self.subscription_odom = self.create_subscription(Odometry, 'odom', self.odom_callback, 10)
 
         return TransitionCallbackReturn.SUCCESS
     
@@ -218,6 +276,36 @@ class ControlNode(LifecycleNode):
             
         path_msg.poses = poses
         self.path_publisher_.publish(path_msg)
+
+    def params_callback(self, params):
+        for p in params:
+            if p.name == 'Kp':
+                self.Kp = p.value
+                self.get_logger().info(f"Kp changed to {self.Kp}")
+            elif p.name == 'Ki':
+                self.Ki = p.value
+                self.get_logger().info(f"Ki changed to {self.Ki}")
+            elif p.name == 'Kd':
+                self.Kd = p.value
+                self.get_logger().info(f"Kd changed to {self.Kd}")
+            elif p.name == 'Key':
+                self.Key = p.value
+                self.get_logger().info(f"Key changed to {self.Key}")
+            elif p.name == 'Keh':
+                self.Keh = p.value
+                self.get_logger().info(f"Keh changed to {self.Keh}")
+            elif p.name == 'speed':
+                self.speed = p.value
+                self.get_logger().info(f"speed changed to {self.speed}")
+            elif p.name == 'sampling_period':
+                self.T = p.value
+                self.get_logger().info(f"sampling_period (T) changed to {self.T}")
+
+        return SetParametersResult(
+            successful=True,
+            reason='All params setted'
+        )
+
     
     #Função Própria
     def _destroy_publishers(self, names=None):

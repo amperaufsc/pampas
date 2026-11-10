@@ -1,0 +1,10 @@
+/control_node:
+  ros__parameters:
+    Kd: 0.0
+    Keh: 4.0
+    Key: 3.0
+    Ki: 0.01
+    Kp: 0.05
+    sampling_period: 0.01
+    speed: 1.0
+    use_sim_time: false
