@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.10"
 resolution-markers = [
     "python_full_version >= '3.12' and sys_platform == 'win32'",
@@ -2317,6 +2317,15 @@ wheels = [
 ]
 
 [[package]]
+name = "pyserial"
+version = "3.5"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/1e/7d/ae3f0a63f41e4d2f6cb66a5b57197850f919f59e558159a4dd3a818f5082/pyserial-3.5.tar.gz", hash = "sha256:3c77e014170dfffbd816e6ffc205e9842efb10be9f58ec16d3e8675b4925cddb", size = 159125, upload-time = "2020-11-23T03:59:15.045Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/07/bc/587a445451b253b285629263eb51c2d8e9bcea4fc97826266d186f96f558/pyserial-3.5-py2.py3-none-any.whl", hash = "sha256:c4451db6ba391ca6ca299fb3ec7bae67a5c55dde170964c7a14ceefec02f2cf0", size = 90585, upload-time = "2020-11-23T03:59:13.41Z" },
+]
+
+[[package]]
 name = "pytest"
 version = "9.1.1"
 source = { registry = "https://pypi.org/simple" }
@@ -2734,6 +2743,15 @@ wheels = [
 ]
 
 [[package]]
+name = "simple-pid"
+version = "2.0.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/78/0a/c670a4f4dea4b21c0b074b193c54698e5e047479e688c8d5495d264c9921/simple_pid-2.0.1.tar.gz", hash = "sha256:5771761c54541c900e597d6c2e4ea93fd2cc98f4e48cb9eca265fba2e65be99e", size = 15577, upload-time = "2024-07-21T13:27:32.037Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ee/0e/4d4fe01b21558a31a12e029a57cf677666c89c1b00cb82c1b53d0025cd63/simple_pid-2.0.1-py3-none-any.whl", hash = "sha256:1d53ed76b03d949ceea46b538fb22999d27899e2e655aa19b99c40f6edcedca6", size = 7194, upload-time = "2024-07-21T13:27:30.688Z" },
+]
+
+[[package]]
 name = "six"
 version = "1.17.0"
 source = { registry = "https://pypi.org/simple" }
@@ -3127,8 +3145,10 @@ dependencies = [
     { name = "huggingface-hub" },
     { name = "lark" },
     { name = "numpy" },
+    { name = "pyserial" },
     { name = "scipy", version = "1.15.3", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
     { name = "scipy", version = "1.17.1", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version >= '3.11'" },
+    { name = "simple-pid" },
     { name = "torch" },
     { name = "ultralytics" },
     { name = "wheel" },
@@ -3150,7 +3170,9 @@ requires-dist = [
     { name = "huggingface-hub", specifier = ">=1.21.0" },
     { name = "lark", specifier = ">=1.3.1" },
     { name = "numpy", specifier = "<2" },
+    { name = "pyserial", specifier = ">=3.5" },
     { name = "scipy", specifier = ">=1.15.3" },
+    { name = "simple-pid", specifier = ">=2.0.1" },
     { name = "torch", specifier = ">=2.1.0" },
     { name = "ultralytics", specifier = ">=8.4.81" },
     { name = "wheel", specifier = ">=0.47.0" },
