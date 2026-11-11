@@ -31,7 +31,6 @@ class DCMotorSteeringActuator(SteeringActuator):
             motor_command = 0.0
 
         self._board.drive(motor_command)
-        self._last_motor_command = motor_command
 
         return SteeringActuator.DebugInfo(
             sensor_position=measured_position,
