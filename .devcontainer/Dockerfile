@@ -92,9 +92,6 @@ alias ls='ls --color=auto'
 alias grep='grep --color=auto'
 EOF
 
-RUN /opt/venv/bin/python -m ipykernel install --prefix /usr/local \
-    --name pampas --display-name "Python (pampas)"
-
 COPY .devcontainer/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 ENTRYPOINT ["/entrypoint.sh"]
