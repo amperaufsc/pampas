@@ -18,7 +18,7 @@ const float MAX_DUTY = 230; // to avoid damaging the motor
 const unsigned long TIMEOUT_MS = 100; // no command for this long -> stop
 const unsigned long TELEMETRY_PERIOD_MS = 10; // 100 Hz
 
-float motorCommand = 0.0;
+uint8_t motorCommand = 0;
 unsigned long lastCommandMs = 0;
 unsigned long lastTelemetryMs = 0;
 char buf[24];
@@ -48,7 +48,7 @@ void drive(int duty) {
   duty = constrain(duty, -MAX_DUTY, MAX_DUTY);
   digitalWrite(LEFT_PIN,  duty >= 0);
   digitalWrite(RIGHT_PIN, duty <  0);
-  analogWrite(PWM_PIN, (uint8_t)(duty);
+  analogWrite(PWM_PIN, abs(duty));
 }
 
 // Non-blocking line parser (readStringUntil would block up to 1 s).
