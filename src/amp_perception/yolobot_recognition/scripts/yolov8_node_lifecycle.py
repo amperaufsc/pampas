@@ -9,6 +9,7 @@ from cv_bridge import CvBridge
 from yolov8_msgs.msg import InferenceWithConfidence
 from yolov8_msgs.msg import Yolov8Inference
 from amp_utils.definitions import get_file_path_from_root
+import time
 
 bridge = CvBridge()
 
@@ -45,22 +46,21 @@ class LifecycleCameraSubscriber(LifecycleNode):
             )
         )
 
+        # Initialize parameters
+        self.weigths_path = get_file_path_from_root(self.get_parameter('yolo_weights_path').value)
+        self.confidence_threshold = self.get_parameter('confidence_threshold').value
+
+        # Parameters callback
+        self.add_on_set_parameters_callback(self.param_callback)        
+
         self.get_logger().info("Yolo node initialized (Unconfigured)")
 
     def on_configure(self, state: State) -> TransitionCallbackReturn:
         try:
             self.get_logger().info("Configuring Yolo Node") 
 
-            # Initialize parameters
-            self.weigths_path = get_file_path_from_root(self.get_parameter('yolo_weights_path').value)
-            
-            self.confidence_threshold = self.get_parameter('confidence_threshold').value
-
             # Intialize Yolo
             self.model = YOLO(self.weigths_path)
-
-            # Implement params callback
-            self.add_on_set_parameters_callback(self.params_callback)
 
             self.yolov8_pub = self.create_lifecycle_publisher(Yolov8Inference, "inference", 1)
             self.img_pub = self.create_lifecycle_publisher(Image, "inferenceimg", 1)
@@ -140,41 +140,36 @@ class LifecycleCameraSubscriber(LifecycleNode):
         self.yolov8_pub.publish(self.yolov8_inference)
         self.yolov8_inference.yolov8_inference.clear()
 
-    def params_callback(self, params):
-        for p in params:
-            if p.name == "yolo_weights_path":
-                try:
-                    path = get_file_path_from_root(p.value)
-                    # Intialize Yolo
-                    self.model = YOLO(path)
-                    
-                    self.weigths_path = path
-                    self.get_logger().info(f"Model weights changed to {self.weigths_path.name}")
-                    continue
+    def param_callback(self, param):        
+        try:
+            p = self.get_parameter('yolo_weights_path')
+            path = get_file_path_from_root(p.value)
 
-                except FileNotFoundError:
-                    return SetParametersResult(
-                            successful=False,
-                            reason='Model weights path received does not match a file'
-                    )
-                except ValueError: 
-                    return SetParametersResult(
-                            successful=False,
-                            reason=f'Model weights path is empty'
-                    )
-                except Exception as e:
-                    return SetParametersResult(
-                            successful=False,
-                            reason=f'Could not load model: {e}'
-                    )
+            # Intialize Yolo
+            self.model = YOLO(path)
+            
+            self.weigths_path = path
+            self.get_logger().info(f"Model weights changed to {self.weigths_path.name}")
 
-            elif p.name == "confidence_threshold":
-                self.confidence_threshold = p.value
-                self.get_logger().info(f"Threshold: {self.confidence_threshold}")
+        except FileNotFoundError:
+            return SetParametersResult(
+                    successful=False,
+                    reason='Model weights path received does not match a file'
+            )
+        except ValueError: 
+            return SetParametersResult(
+                    successful=False,
+                    reason=f'Model weights path is empty'
+            )
+        except Exception as e:
+            return SetParametersResult(
+                    successful=False,
+                    reason=f'Could not load model: {e}'
+            )
 
         return SetParametersResult(
             successful=True,
-            reason='All params setted'
+            reason='Model path param setted'
         )
         
 def main(args=None):
