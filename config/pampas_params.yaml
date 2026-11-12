@@ -1,0 +1,8 @@
+/mapper_node:
+  ros__parameters:
+    max_delay: 0.1
+    queue_size: 10
+    source_frame: oak_left_camera_optical_frame
+    target_frame: left_camera_link
+    use_sim_time: false
+

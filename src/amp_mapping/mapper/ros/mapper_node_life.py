@@ -3,11 +3,10 @@ import rclpy
 from rclpy.lifecycle import LifecycleNode
 from rclpy.lifecycle import LifecycleState
 from rclpy.lifecycle import TransitionCallbackReturn
-from geometry_msgs.msg import Pose
-from geometry_msgs.msg import PoseStamped
+from rcl_interfaces.msg import ParameterDescriptor, FloatingPointRange, IntegerRange, SetParametersResult
 import numpy as np
-from fs_msgs.msg import ConeWithCovariance, Cone
-from fs_msgs.msg import Track, TrackStamped,TrackStampedWithCovariance
+from fs_msgs.msg import Cone
+from fs_msgs.msg import Track, TrackStampedWithCovariance
 from message_filters import Subscriber, ApproximateTimeSynchronizer
 import rclpy.time
 from src.mapper_function import LuisLopesMappingMethod
@@ -17,7 +16,6 @@ from src.vehicle_state import VehicleState
 from nav_msgs.msg import Odometry
 from tf2_ros.transform_listener import TransformListener
 from tf2_ros.buffer import Buffer
-from tf2_ros import LookupTransform
 
 
 
@@ -26,8 +24,7 @@ class MapperNode(LifecycleNode):
     def __init__(self):
         super().__init__('mapper_node_life')
 
-        #Reservando espaço pra usar depois
-        self.get_logger().info('Mapper Unconfigured. (o_o)')
+        self.get_logger().info('Mapper Unconfigured')
         self._tf_buffer = None
         self.tf_listener = None
         self.track_sub = None
@@ -35,43 +32,72 @@ class MapperNode(LifecycleNode):
         self.time_sync = None
         self.track_pub = None
 
-        self.declare_parameter('target_frame', 'left_camera_link')
-        self.declare_parameter('source_frame', 'oak_left_camera_optical_frame')
-        self.declare_parameter('queue_size', 10)
-        self.declare_parameter('max_delay', 0.1)
-        self.declare_parameter('time_gap', 1)
+        # ros params declaration
+        self.declare_parameter(
+            'target_frame',
+            'left_camera_link',
+            ParameterDescriptor(
+                description='Target TF frame.'
+            )
+        )
 
+        self.declare_parameter(
+            'source_frame',
+            'oak_left_camera_optical_frame', 
+            ParameterDescriptor(
+                description='Source TF frame.'
+            )
+        )
+
+        self.declare_parameter(
+            'queue_size', 
+            10,
+            ParameterDescriptor(
+                description='Queue size for message synchronization.',
+                integer_range=[
+                    IntegerRange(from_value=1, to_value=100, step=1)
+                ]
+            )
+        )
+
+        self.declare_parameter(
+            'max_delay', 
+            0.1, 
+            ParameterDescriptor(
+                description='Maximum delay (in seconds) allowed for message synchronization.',
+                floating_point_range=[
+                    FloatingPointRange(from_value=0.0, to_value=5.0, step=0.01)
+                ]
+            )
+        )
+
+        self.target_frame = self.get_parameter('target_frame').value
+        self.source_frame = self.get_parameter('source_frame').value
+        self.queue_size = self.get_parameter('queue_size').value
+        self.max_delay = self.get_parameter('max_delay').value
+        self.time_gap = 1
 
     #Lifecycle Callbacks
-
     def on_configure(self, state: LifecycleState) -> TransitionCallbackReturn:
         #Escuta para ter as informações mas não publica
-        self.get_logger().info('Configuring MapperNode...')
+        self.get_logger().info('Configuring Mapper Node')
 
         try:
             self._tf_buffer = Buffer()
             self.track_sub = Subscriber(self, TrackStampedWithCovariance, "track")
-            # Normal odom
-            #self.odom_sub = Subscriber(self, Odometry, "odom")
             self.odom_sub = Subscriber(self, Odometry, "odom")
             self.tf_listener = TransformListener(self._tf_buffer, self)
             self.track_pub = self.create_lifecycle_publisher(Track, 'track_pub', 10)
-
-            self.target_frame = self.get_parameter('target_frame').value
-            self.source_frame = self.get_parameter('source_frame').value
-            queue_size = self.get_parameter('queue_size').value
-            max_delay = self.get_parameter('max_delay').value
-            self.time_gap = self.get_parameter('time_gap').value
 
             self.track_received = False
             self.first_pose = True
             self.first_track = True
             self.transform_received = False
 
-            self.time_sync = ApproximateTimeSynchronizer([self.track_sub, self.odom_sub], queue_size, max_delay)
+            self.time_sync = ApproximateTimeSynchronizer([self.track_sub, self.odom_sub], self.queue_size, self.max_delay)
             self.time_sync.registerCallback(self.sync_callback)
 
-            self.get_logger().info('MapperNode Configured! (o.o)')
+            self.get_logger().info('Mapper Node Configured')
             return TransitionCallbackReturn.SUCCESS
         except Exception as e:
             self.get_logger().error(f"Configuration failed: {e}")
@@ -79,12 +105,12 @@ class MapperNode(LifecycleNode):
 
 
     def on_activate(self, state: LifecycleState) -> TransitionCallbackReturn:
-        self.get_logger().info('Activating MapperNode...')
+        self.get_logger().info('Activating Mapper Node')
 
         try:
             self.track_pub.on_activate(state)
 
-            self.get_logger().info('MapperNode Activated! (o‿o)')
+            self.get_logger().info('Mapper Node Activated')
             return super().on_activate(state)
 
         except Exception as e:
@@ -93,13 +119,12 @@ class MapperNode(LifecycleNode):
 
 
     def on_deactivate(self, state: LifecycleState) -> TransitionCallbackReturn:
-        #Contrário do on_activate
-        self.get_logger().info('Deactivating MapperNode...')
+        self.get_logger().info('Deactivating Mapper Node')
 
         try:
             self.track_pub.on_deactivate(state)
 
-            self.get_logger().info('MapperNode Deactivated! (-‿-)')
+            self.get_logger().info('Mapper Node Deactivated')
             return super().on_deactivate(state)
 
         except Exception as e:
@@ -108,8 +133,7 @@ class MapperNode(LifecycleNode):
 
 
     def on_cleanup(self, state: LifecycleState) -> TransitionCallbackReturn:
-        # Terminar de "limpar" o nó
-        self.get_logger().info('Cleaning up MapperNode...')
+        self.get_logger().info('Cleaning up Mapper Node')
 
         try:
             self._destroy_subscriptions()
@@ -124,7 +148,7 @@ class MapperNode(LifecycleNode):
             self.first_track = True
             self.transform_received = False
 
-            self.get_logger().info('MapperNode Cleaned Up! (x‿x)')
+            self.get_logger().info('Mapper Node Cleaned Up')
             return TransitionCallbackReturn.SUCCESS
         except Exception as e:
             self.get_logger().error(f"Cleaning failed: {e}")
@@ -132,7 +156,7 @@ class MapperNode(LifecycleNode):
 
 
     def on_shutdown(self, state: LifecycleState) -> TransitionCallbackReturn:
-        self.get_logger().info('Shutting down MapperNode...')
+        self.get_logger().info('Shutting down Mapper Node')
 
         try:
             self._destroy_subscriptions()
@@ -142,7 +166,7 @@ class MapperNode(LifecycleNode):
             self._tf_buffer = None
             self.time_sync = None
 
-            self.get_logger().info('MapperNode Shutted Down! (x_x)')
+            self.get_logger().info('Mapper Node Shutted Down')
             return TransitionCallbackReturn.SUCCESS
         except Exception as e:
             self.get_logger().error(f"Shutdown failed: {e}")
@@ -154,7 +178,6 @@ class MapperNode(LifecycleNode):
         tempo = 0
         
         if tempo < self.time_gap:
-            
             
             if self.transform_received:
                 rotate_track =self.rotate_track(track,self.trans)
@@ -222,6 +245,7 @@ class MapperNode(LifecycleNode):
         T[:3, :3] =R
         T[:3, 3] = t
         return T
+    
     def quaternion_to_rotation_matrix(self,q):
     
         x, y, z, w = q
@@ -241,13 +265,10 @@ class MapperNode(LifecycleNode):
         ])
 
         return R
-    
 
     def track_to_array(self,track):
         track_array = np.array([[cone.location.x,cone.location.y,cone.location.z,1] for cone in track])
         return track_array
-    
-            
 
     def track_to_obstacle(self, track):
         self.obstacle_numpy_array = []
@@ -266,7 +287,6 @@ class MapperNode(LifecycleNode):
             self.map=Map(self.obstacle_numpy_array)
             self.first_track=False
         
-        
         self.track_received = True
 
 
@@ -280,8 +300,6 @@ class MapperNode(LifecycleNode):
 
         yaw = np.arctan2(2*(orientation_q.w*orientation_q.z - orientation_q.x*orientation_q.y), 1 - 2*((orientation_q.y)**2 + (orientation_q.z)**2))
         self.state=VehicleState(x,y,yaw,0,0,0)
-    
-
     
     def map_to_track(self,map):
         
@@ -301,7 +319,6 @@ class MapperNode(LifecycleNode):
             track.track.append(cone)
         return track
 
-    #Função Própria
     def _destroy_publishers(self, names=None):
         if names is None:
             names = [
@@ -329,7 +346,6 @@ class MapperNode(LifecycleNode):
             if sub is not None:
                 self.destroy_subscription(sub)
                 setattr(self, name, None)
-
 
 def main():
     rclpy.init()
