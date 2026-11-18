@@ -94,9 +94,6 @@ class ControlNode(LifecycleNode):
             )
         )
 
-    def on_configure(self, state: LifecycleState) -> TransitionCallbackReturn:
-        self.get_logger().info('Configuring Control Node')
-
         self.Kp = self.get_parameter('Kp').value
         self.Ki = self.get_parameter('Ki').value
         self.Kd = self.get_parameter('Kd').value
@@ -105,8 +102,8 @@ class ControlNode(LifecycleNode):
         self.speed = self.get_parameter('speed').value
         self.T = self.get_parameter('sampling_period').value
 
-        self.add_on_set_parameters_callback(self.params_callback)
-
+    def on_configure(self, state: LifecycleState) -> TransitionCallbackReturn:
+        self.get_logger().info('Configuring Control Node')
         self.index = 0
 
         vehicle_parameters = Vehicle_Parameters(1, np.radians(35), np.radians(-35)) #axle_length - steering_up_limit - steering_down_limit
@@ -276,35 +273,6 @@ class ControlNode(LifecycleNode):
             
         path_msg.poses = poses
         self.path_publisher_.publish(path_msg)
-
-    def params_callback(self, params):
-        for p in params:
-            if p.name == 'Kp':
-                self.Kp = p.value
-                self.get_logger().info(f"Kp changed to {self.Kp}")
-            elif p.name == 'Ki':
-                self.Ki = p.value
-                self.get_logger().info(f"Ki changed to {self.Ki}")
-            elif p.name == 'Kd':
-                self.Kd = p.value
-                self.get_logger().info(f"Kd changed to {self.Kd}")
-            elif p.name == 'Key':
-                self.Key = p.value
-                self.get_logger().info(f"Key changed to {self.Key}")
-            elif p.name == 'Keh':
-                self.Keh = p.value
-                self.get_logger().info(f"Keh changed to {self.Keh}")
-            elif p.name == 'speed':
-                self.speed = p.value
-                self.get_logger().info(f"speed changed to {self.speed}")
-            elif p.name == 'sampling_period':
-                self.T = p.value
-                self.get_logger().info(f"sampling_period (T) changed to {self.T}")
-
-        return SetParametersResult(
-            successful=True,
-            reason='All params setted'
-        )
 
     
     #Função Própria
