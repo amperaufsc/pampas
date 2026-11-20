@@ -37,7 +37,7 @@ class MapperNode(LifecycleNode):
             'target_frame',
             'left_camera_link',
             ParameterDescriptor(
-                description='Target TF frame.'
+                description='Destination TF coordinate frame into which points, poses, or coordinates will be transformed.'
             )
         )
 
@@ -45,36 +45,12 @@ class MapperNode(LifecycleNode):
             'source_frame',
             'oak_left_camera_optical_frame', 
             ParameterDescriptor(
-                description='Source TF frame.'
+                description='Origin TF coordinate frame in which the incoming points, poses, or coordinates are originally expressed.'
             )
         )
-
-        self.declare_parameter(
-            'queue_size', 
-            10,
-            ParameterDescriptor(
-                description='Queue size for message synchronization.',
-                integer_range=[
-                    IntegerRange(from_value=1, to_value=100, step=1)
-                ]
-            )
-        )
-
-        self.declare_parameter(
-            'max_delay', 
-            0.1, 
-            ParameterDescriptor(
-                description='Maximum delay (in seconds) allowed for message synchronization.',
-                floating_point_range=[
-                    FloatingPointRange(from_value=0.0, to_value=5.0, step=0.01)
-                ]
-            )
-        )
-
+        
         self.target_frame = self.get_parameter('target_frame').value
         self.source_frame = self.get_parameter('source_frame').value
-        self.queue_size = self.get_parameter('queue_size').value
-        self.max_delay = self.get_parameter('max_delay').value
         self.time_gap = 1
 
     #Lifecycle Callbacks
@@ -94,7 +70,7 @@ class MapperNode(LifecycleNode):
             self.first_track = True
             self.transform_received = False
 
-            self.time_sync = ApproximateTimeSynchronizer([self.track_sub, self.odom_sub], self.queue_size, self.max_delay)
+            self.time_sync = ApproximateTimeSynchronizer([self.track_sub, self.odom_sub], 10, 0.1)
             self.time_sync.registerCallback(self.sync_callback)
 
             self.get_logger().info('Mapper Node Configured')
