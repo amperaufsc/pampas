@@ -8,7 +8,7 @@ from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 from yolov8_msgs.msg import InferenceWithConfidence
 from yolov8_msgs.msg import Yolov8Inference
-from amp_utils.definitions import get_file_path_from_root
+from amp_utils.definitions import get_file_path_from_root, get_project_root
 import time
 
 bridge = CvBridge()
@@ -47,7 +47,6 @@ class LifecycleCameraSubscriber(LifecycleNode):
         )
 
         # Initialize parameters
-        self.weigths_path = get_file_path_from_root(self.get_parameter('yolo_weights_path').value)
         self.confidence_threshold = self.get_parameter('confidence_threshold').value
 
         # Parameters callback
@@ -57,10 +56,12 @@ class LifecycleCameraSubscriber(LifecycleNode):
 
     def on_configure(self, state: State) -> TransitionCallbackReturn:
         try:
-            self.get_logger().info("Configuring Yolo Node") 
+            self.get_logger().info("Configuring Yolo Node")
+
+            model_weight_path = get_file_path_from_root(self.get_parameter('yolo_weights_path').value)
 
             # Intialize Yolo
-            self.model = YOLO(self.weigths_path)
+            self.model = YOLO(model_weight_path)
 
             self.yolov8_pub = self.create_lifecycle_publisher(Yolov8Inference, "inference", 1)
             self.img_pub = self.create_lifecycle_publisher(Image, "inferenceimg", 1)
@@ -140,38 +141,37 @@ class LifecycleCameraSubscriber(LifecycleNode):
         self.yolov8_pub.publish(self.yolov8_inference)
         self.yolov8_inference.yolov8_inference.clear()
 
-    def param_callback(self, param):        
-        try:
-            p = self.get_parameter('yolo_weights_path')
-            path = get_file_path_from_root(p.value)
+    def param_callback(self, params):
+        for param in params:
+            if param.name == 'yolo_weights_path':
+                try:
+                    path = get_file_path_from_root(param.value)
 
-            # Intialize Yolo
-            self.model = YOLO(path)
-            
-            self.weigths_path = path
-            self.get_logger().info(f"Model weights changed to {self.weigths_path.name}")
+                    # Intialize Yolo
+                    self.model = YOLO(path)
+                    
+                    self.get_logger().info(f"Model weights changed to {path.name}")
 
-        except FileNotFoundError:
-            return SetParametersResult(
-                    successful=False,
-                    reason='Model weights path received does not match a file'
-            )
-        except ValueError: 
-            return SetParametersResult(
-                    successful=False,
-                    reason=f'Model weights path is empty'
-            )
-        except Exception as e:
-            return SetParametersResult(
-                    successful=False,
-                    reason=f'Could not load model: {e}'
-            )
+                except FileNotFoundError:
+                    return SetParametersResult(
+                        successful=False,
+                        reason='Model weights path received does not match a file'
+                    )
+                except ValueError: 
+                    return SetParametersResult(
+                        successful=False,
+                        reason='Model weights path is empty'
+                    )
+                except Exception as e:
+                    return SetParametersResult(
+                        successful=False,
+                        reason=f'Could not load model: {e}'
+                    )
 
         return SetParametersResult(
             successful=True,
             reason='Model path param setted'
         )
-        
 def main(args=None):
     rclpy.init(args=args)
 

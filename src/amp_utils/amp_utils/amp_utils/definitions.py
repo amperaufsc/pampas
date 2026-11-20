@@ -13,7 +13,8 @@ def get_project_root():
             return parent
     raise FileNotFoundError("Project root (with pyproject.toml) not found.")
 
-def get_file_path_from_root(relative_path : str):
+def get_file_path_from_root(relative_path) -> Path:
     """Gets the absolute path to the project root directory."""
-    root = get_project_root()
-    return root / relative_path
+    root = str(get_project_root())
+    relative_path = str(relative_path)
+    return Path(root + relative_path)
