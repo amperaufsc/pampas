@@ -1,14 +1,15 @@
 #!/usr/bin/env python3
 
 from ultralytics import YOLO
-import cv2
 import rclpy
 from rclpy.lifecycle import LifecycleNode, State, TransitionCallbackReturn
+from rcl_interfaces.msg import ParameterDescriptor, FloatingPointRange, SetParametersResult
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
-
 from yolov8_msgs.msg import InferenceWithConfidence
 from yolov8_msgs.msg import Yolov8Inference
+from amp_utils.definitions import get_file_path_from_root, get_project_root
+import time
 
 bridge = CvBridge()
 
@@ -23,21 +24,44 @@ class LifecycleCameraSubscriber(LifecycleNode):
         self.img_pub = None
         self.model = None
 
-        self.declare_parameter('script_path', 'None')
-        self.declare_parameter('confidence_threshold', 0.8)
+        # Declare parameters
+        self.declare_parameter(
+            'yolo_weights_path',
+            'None',
+            descriptor=ParameterDescriptor(
+                description='Yolo weight path used for cone detection'
+            )
+        )       
+              
+        self.declare_parameter(
+            'confidence_threshold',
+            0.8,
+            descriptor=ParameterDescriptor(
+                description='Minimum confidence (0.0 to 1.0) for a cone detection to be accepted',
+                floating_point_range=[FloatingPointRange(
+                    from_value=0.0,
+                    to_value=1.0,
+                    step=0.0
+                )]
+            )
+        )
 
-        self.get_logger().info("Nó de Inferência YOLOv8 Inicializado (Unconfigured)")
+        # Initialize parameters
+        self.confidence_threshold = self.get_parameter('confidence_threshold').value
+
+        # Parameters callback
+        self.add_on_set_parameters_callback(self.param_callback)        
+
+        self.get_logger().info("Yolo node initialized (Unconfigured)")
 
     def on_configure(self, state: State) -> TransitionCallbackReturn:
         try:
-            self.get_logger().info("Configurando o nó (Carregando Pesos do YOLO)...")
+            self.get_logger().info("Configuring Yolo Node")
 
-            self.script_path = self.get_parameter('script_path').value
-            self.confidence_threshold = self.get_parameter('confidence_threshold').value
+            model_weight_path = get_file_path_from_root(self.get_parameter('yolo_weights_path').value)
 
-            self.get_logger().info(f"Threshold: {self.confidence_threshold}")
-
-            self.model = YOLO(self.script_path)
+            # Intialize Yolo
+            self.model = YOLO(model_weight_path)
 
             self.yolov8_pub = self.create_lifecycle_publisher(Yolov8Inference, "inference", 1)
             self.img_pub = self.create_lifecycle_publisher(Image, "inferenceimg", 1)
@@ -50,21 +74,21 @@ class LifecycleCameraSubscriber(LifecycleNode):
 
             return TransitionCallbackReturn.SUCCESS
         except Exception as e:
-            self.get_logger().error(f"Erro na configuração: {e}")
+            self.get_logger().error(f"Error when configuring: {e}")
             return TransitionCallbackReturn.ERROR
 
     def on_activate(self, state: State) -> TransitionCallbackReturn:
-        self.get_logger().info("Ativando a Inferência YOLOv8...")
+        self.get_logger().info("Activating Yolo Node")
         super().on_activate(state)
         return TransitionCallbackReturn.SUCCESS
 
     def on_deactivate(self, state: State) -> TransitionCallbackReturn:
-        self.get_logger().info("Desativando a Inferência YOLOv8...")
+        self.get_logger().info("Deactivating Yolo Node")
         super().on_deactivate(state)
         return TransitionCallbackReturn.SUCCESS
 
     def on_cleanup(self, state: State) -> TransitionCallbackReturn:
-        self.get_logger().info("Limpando a memória do nó...")
+        self.get_logger().info("Cleaning up Yolo Node")
 
         self.destroy_subscription(self.subscription)
         self.destroy_lifecycle_publisher(self.yolov8_pub)
@@ -78,7 +102,7 @@ class LifecycleCameraSubscriber(LifecycleNode):
         return TransitionCallbackReturn.SUCCESS
 
     def on_shutdown(self, state: State) -> TransitionCallbackReturn:
-        self.get_logger().info("Encerrando o nó com segurança...")
+        self.get_logger().info("Yolo Node Shutdown")
         self.destroy_subscription(self.subscription)
         self.destroy_lifecycle_publisher(self.yolov8_pub)
         self.destroy_lifecycle_publisher(self.img_pub)
@@ -92,7 +116,7 @@ class LifecycleCameraSubscriber(LifecycleNode):
 
         img = bridge.imgmsg_to_cv2(data, "bgr8")
 
-        results = self.model(img, conf=confidence, device=0)
+        results = self.model(img, conf=confidence, verbose=False, device=0)
 
         self.yolov8_inference.header = data.header
 
@@ -110,8 +134,6 @@ class LifecycleCameraSubscriber(LifecycleNode):
                 self.inference_result.confidence = float(box.conf)
                 self.yolov8_inference.yolov8_inference.append(self.inference_result)
 
-            #self.get_logger().info(f"{self.yolov8_inference}")
-
         annotated_frame = results[0].plot()
         img_msg = bridge.cv2_to_imgmsg(annotated_frame)
 
@@ -119,6 +141,37 @@ class LifecycleCameraSubscriber(LifecycleNode):
         self.yolov8_pub.publish(self.yolov8_inference)
         self.yolov8_inference.yolov8_inference.clear()
 
+    def param_callback(self, params):
+        for param in params:
+            if param.name == 'yolo_weights_path':
+                try:
+                    path = get_file_path_from_root(param.value)
+
+                    # Intialize Yolo
+                    self.model = YOLO(path)
+                    
+                    self.get_logger().info(f"Model weights changed to {path.name}")
+
+                except FileNotFoundError:
+                    return SetParametersResult(
+                        successful=False,
+                        reason='Model weights path received does not match a file'
+                    )
+                except ValueError: 
+                    return SetParametersResult(
+                        successful=False,
+                        reason='Model weights path is empty'
+                    )
+                except Exception as e:
+                    return SetParametersResult(
+                        successful=False,
+                        reason=f'Could not load model: {e}'
+                    )
+
+        return SetParametersResult(
+            successful=True,
+            reason='Model path param setted'
+        )
 def main(args=None):
     rclpy.init(args=args)
 
