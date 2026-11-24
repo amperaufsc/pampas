@@ -1,6 +1,11 @@
+/yolo_node:
+  ros__parameters:
+    confidence_threshold: 0.8
+    use_sim_time: false
+    yolo_weights_path: "" # Relative path from the repo root
+    
 /mapper_node:
   ros__parameters:
     source_frame: oak_left_camera_optical_frame
     target_frame: left_camera_link
     use_sim_time: false
-
